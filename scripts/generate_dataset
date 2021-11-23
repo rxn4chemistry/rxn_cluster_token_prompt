@@ -1,0 +1,57 @@
+import click
+import pandas as pd
+import json
+
+@click.command()
+@click.argument('input_file_path', type=click.Path(exists=True), required=True)
+@click.argument('output_path', type=click.Path(exists=True), required=True)
+@click.option('--class-token/--no-class-token', required=False, default=True)
+@click.option('--map-file', required=False)
+@click.option(
+    '--output-type',
+    default='training',
+    type=click.Choice(
+        ['training', 'inference'], case_sensitive=True),
+    help='the output type of the files. The type will be different if the SMILES are used for training or for inference.'
+    'Available: training, inference'
+)
+def main(input_file_path: str, output_path: str, class_token: bool, map_file: str, output_type: str):
+    df = pd.read_csv(input_file_path)
+    df['products'] = df.rxn.apply(lambda x: x.split('>>')[1].strip())
+    df['precursors'] = df.rxn.apply(lambda x: x.split('>>')[0].strip())
+    
+    if not class_token:
+        with open(f"{output_path}/precursors.{output_type}", 'w') as f:
+            f.write('\n'.join(df.precursors))
+        with open(f"{output_path}/products.{output_type}", 'w') as f:
+            f.write('\n'.join(df.products))
+        return 0
+    
+    if 'classes' not in df.columns:
+        print("Sorry, we could not find a classification column!")
+        raise ValueError
+
+    if not map_file:
+        classes_map = {f"{i}": f"{i}" for i in range(0,12)}
+    else:
+        with open(map_file) as f:
+            classes_map = json.load(f)
+    
+    if output_type == 'training':
+        class_token_products = [f"[{classes_map[str(df['classes'].values[i])]}] {df['products'].values[i]}" for i in range(len(df))]
+        class_token_precursors = df.precursors.values
+    elif output_type == 'inference':
+        unique_values = sorted(set(classes_map.values()), key=lambda x: int(x))
+        print(unique_values)
+        class_token_products = [f"[{i}] {elem}" for elem in df['products'].values for i in unique_values]
+        class_token_precursors = [elem for elem in df['precursors'].values for i in unique_values]
+
+    with open(f"{output_path}/precursors.{output_type}", 'w') as f:
+        f.write('\n'.join(class_token_precursors))        
+    with open(f"{output_path}/products.{output_type}", 'w') as f:
+        f.write('\n'.join(class_token_products))
+            
+
+
+if __name__ == "__main__":
+    main()
