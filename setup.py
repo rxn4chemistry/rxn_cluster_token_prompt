@@ -15,6 +15,9 @@ setup(
         'pandas>=0.23.3',  # not installing from setup.cfg
         'tqdm>=4.30.0',  # not installing from setup.cfg
         'jupyterlab>=3.2.0',  # not installing from setup.cfg
+        'scikit-learn>=1.0.1',
+        'seaborn>=0.11.2',
+        'matplotlib>=3.5.0',
         'rxn_chemutils '
         '@ git+https://{}@github.ibm.com/rxn/rxn_chemutils@latest'.format(os.environ['GHE_TOKEN']),
     ]
