@@ -18,5 +18,10 @@ setup(
         'rxn_chemutils'
 #       DEPRECATED
 #        ' @ git+https://{}@github.ibm.com/rxn/rxn_chemutils@0.3.11'.format(os.environ['GHE_TOKEN']),
+        'scikit-learn>=1.0.1',
+        'seaborn>=0.11.2',
+        'matplotlib>=3.5.0',
+        'rxn_chemutils '
+        '@ git+https://{}@github.ibm.com/rxn/rxn_chemutils@latest'.format(os.environ['GHE_TOKEN']),
     ]
 )
