@@ -1,21 +1,50 @@
 import click
-import pandas as pd
 import json
+from rxn_chemutils.tokenization import tokenize_smiles
 
 @click.command()
 @click.argument('input_file_path', type=click.Path(exists=True), required=True)
 @click.option('--product/--precursors', required=True)
-def main(input_file_path: str, product: str):
+@click.option('--map-file', type=str, required=False)
+@click.option('--tokenize', type=bool, default=True)
+def main(input_file_path: str, product: str, map_file:str, tokenize:bool):
+    """
+    Script used to preprocess a dataset to be tested with one of the class token models.
+
+    Parameters
+    ----------
+    input_file_path: a text file containing a list of precursors or products
+    product: wheter the input is product or precursors, this will change the
+        format of the output.
+    map_file: a json file containing the mapping from the 'classes' of the reactions
+        to the wanted tokens
+    tokenize: whether to tokenize the output. Recomended.
+    """
 
     with open(input_file_path) as f:
-        products = [line.strip() for line in f]
+        molecules = [line.strip().replace(' ','') for line in f]
 
-    classes_map = {f"{i}": f"{i}" for i in range(0,12)}
-    
-    if product:
-        class_token_molecules = [f"[{i}] {elem}" for elem in products for i in range(0,12)]
+    if tokenize:
+        molecules = [tokenize_smiles(mol) for mol in molecules]
+
+    # If no json map file is given, use all 12 class tokens
+    if not map_file:
+        classes_map = {f"{i}": f"{i}" for i in range(0, 12)}
     else:
-        class_token_molecules = [f"{elem}" for elem in products for i in range(0,12)]
+        with open(map_file) as f:
+            classes_map = json.load(f)
+
+    unique_values = sorted(set(classes_map.values()), key=lambda x: int(x))
+    print("Tokens for class_token model:", unique_values)
+
+    if product:
+        class_token_molecules = [
+            f"[{i}] {elem}" for elem in molecules for i in unique_values
+        ]
+    else:
+        class_token_precursors = [
+            elem for elem in molecules for i in unique_values
+        ]
     
     for elem in class_token_molecules:
         print(elem)
