@@ -15,7 +15,8 @@ setup(
         'pandas>=0.23.3',  # not installing from setup.cfg
         'tqdm>=4.30.0',  # not installing from setup.cfg
         'jupyterlab>=3.2.0',  # not installing from setup.cfg
-        'rxn_chemutils '
-        '@ git+https://{}@github.ibm.com/rxn/rxn_chemutils@latest'.format(os.environ['GHE_TOKEN']),
+        'rxn_chemutils'
+#       DEPRECATED
+#        ' @ git+https://{}@github.ibm.com/rxn/rxn_chemutils@0.3.11'.format(os.environ['GHE_TOKEN']),
     ]
 )
