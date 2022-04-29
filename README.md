@@ -22,6 +22,12 @@ flake8
 ## Datasets generation
 The data for pistachio is stored in the ibm box folder. 
 Click [here](https://ibm.box.com/s/228otc58sl19evweosamxgyjf66cv025) to access the files
+### Generate one or more random splits
+The random splits can be generated with the following script.
+```bash
+generate_multiple_splits input_csv_file output_path --seed 10 --seed 42 --split_ratio 0.1
+```
+The files are saved in folders like `random10` and `random42` under `output_path`.
 ### Baseline model
 The baseline model does not use any class token. To generate it call the following script:
 ```bash
