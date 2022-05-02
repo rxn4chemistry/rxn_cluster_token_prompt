@@ -13,6 +13,12 @@ For development
 ```bash
 pip install -e .[dev]
 ```
+Install reaction fingerprint
+```bash
+git clone git@github.com:rxn4chemistry/rxnfp.git
+cd rxnfp
+pip install -e .
+```
 Before committing, please run
 ```bash
 yapf -ipr .

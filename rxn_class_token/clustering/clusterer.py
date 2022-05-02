@@ -1,4 +1,4 @@
-import logging
+# import logging
 from typing import Union, List
 
 import attr
@@ -7,11 +7,11 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from tqdm import tqdm
 
-from .fingerprints import generate_pistachio_fps
+from .fingerprints import generate_fps
 from .standardize import standardize_for_fp_model
 
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
+# logger = logging.getLogger(__name__)
+# logger.addHandler(logging.NullHandler())
 
 
 @attr.s(auto_attribs=True)
@@ -35,6 +35,7 @@ class Clusterer:
     def get_cluster_nos(
         self,
         rxn_smiles_list: List[str],
+        model_path: str,
         standardize: bool = True,
         verbose: bool = False
     ) -> List[int]:
@@ -49,6 +50,7 @@ class Clusterer:
             rxn_smiles_list: list of reaction SMILES.
             standardize: whether standardization of the SMILES stings is needed.
                 Note: Likely to be needed anyway to replace the '~' by '.'!
+            model_path: The path to the fps bert model
             verbose: whether to print the progress with tqdm.
         """
         n_reactions = len(rxn_smiles_list)
@@ -70,9 +72,13 @@ class Clusterer:
                 )
             )
 
-        fps_list = generate_pistachio_fps(rxn_smiles_iterator, verbose=False)
+        fps_list = generate_fps(
+            model=model_path,
+            reaction_smiles=rxn_smiles_iterator,
+            verbose=False
+        )
 
-        logger.info('Obtained the fingerprints; getting clusters now.')
+        # logger.info('Obtained the fingerprints; getting clusters now.')
         fps = np.array(fps_list)
         return self.predict(fps)
 
@@ -134,4 +140,4 @@ def inspect_clusters(
     for u, c in zip(unique, counts):
         if normalize:
             c = 100 * c / data.shape[0]
-        print(f'Cluster no {u:>2d}: {c:>6.2f}')
+        print(f'Cluster no {u:>2d}: {c:>6.2f} %')
