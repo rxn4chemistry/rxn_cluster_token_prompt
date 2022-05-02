@@ -11,7 +11,9 @@ from rxn_class_token.clustering.data_loading import FP_COLUMN, load_df
 
 @click.command()
 @click.option('--clusterer_pkl', type=str, required=True, help='Where to store the clusterer.')
-def main(clusterer_pkl: str):
+@click.option('--pca_components', type=int, default=3, help='The order of dimension reduction.')
+@click.option('--n_clusters', type=int, default=12, help='The number of clusters to use.')
+def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
     """Create a clusterer based on a mix of Schneider and XXX data.
 
     The clusterer is used later on to get the reaction class for the diversity
@@ -27,8 +29,8 @@ def main(clusterer_pkl: str):
     all_fps = fps
     print('Merged, shuffled:', len(all_fps))
 
-    pca = PCA(n_components=3)
-    kmeans = KMeans(n_clusters=8)
+    pca = PCA(n_components=pca_components)
+    kmeans = KMeans(n_clusters=n_clusters)
 
     print('Fitting clusterer...')
     _ = ClustererFitter(
