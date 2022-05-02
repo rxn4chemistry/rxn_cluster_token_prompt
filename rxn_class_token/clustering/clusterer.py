@@ -1,4 +1,4 @@
-# import logging
+import logging
 from typing import Union, List
 
 import attr
@@ -10,8 +10,9 @@ from tqdm import tqdm
 from .fingerprints import generate_fps
 from .standardize import standardize_for_fp_model
 
-# logger = logging.getLogger(__name__)
-# logger.addHandler(logging.NullHandler())
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.NullHandler())
 
 
 @attr.s(auto_attribs=True)
@@ -73,12 +74,10 @@ class Clusterer:
             )
 
         fps_list = generate_fps(
-            model=model_path,
-            reaction_smiles=rxn_smiles_iterator,
-            verbose=False
+            model=model_path, reaction_smiles=rxn_smiles_iterator, verbose=False
         )
 
-        # logger.info('Obtained the fingerprints; getting clusters now.')
+        logger.info('Obtained the fingerprints; getting clusters now.')
         fps = np.array(fps_list)
         return self.predict(fps)
 
@@ -112,6 +111,7 @@ class ClustererFitter:
         self.fit_clusterer_on = fit_clusterer_on
 
         self._fit()
+        logger.info('Created the clusters from fingerprints data.')
 
     def _fit(self):
         self._fit_transform()

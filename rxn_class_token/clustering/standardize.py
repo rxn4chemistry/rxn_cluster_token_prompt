@@ -7,6 +7,7 @@ from rxn_chemutils.reaction_equation import (
 from rxn_chemutils.reaction_smiles import parse_any_reaction_smiles
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 logger.addHandler(logging.NullHandler())
 
 

@@ -14,7 +14,7 @@ from rxn_class_token.clustering.data_loading import FP_COLUMN, load_df
 @click.option('--pca_components', type=int, default=3, help='The order of dimension reduction.')
 @click.option('--n_clusters', type=int, default=12, help='The number of clusters to use.')
 def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
-    """Create a clusterer based on a mix of Schneider and XXX data.
+    """Create a clusterer based on some reaction data.
 
     The clusterer is used later on to get the reaction class for the diversity
     model relying on class tokens."""

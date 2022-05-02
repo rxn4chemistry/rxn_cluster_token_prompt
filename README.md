@@ -11,7 +11,7 @@ pip install -e .
 ```
 For development
 ```bash
-pip install -e .[dev]
+pip install -e .\[dev]
 ```
 Install reaction fingerprint
 ```bash
@@ -71,4 +71,12 @@ For the group1 model
 ```bash
 generate_prediction_dataset input_file_precursors_txt --precursors --map-file path_to_this_repo/maps/group1.json
 generate_prediction_dataset input_file_product_txt --product --map-file path_to_this_repo/maps/group1.json
+```
+
+### Generating the class tokens from kmeans clustering
+Set the following environment variables
+```bash
+export FPS_SAVE_PATH=The path where to store the computed fingerprints
+export FPS_MODEL_PATH=The path to the trained fingerprints model
+export DATA_CSV_PATH=The path to the data on which to compute the fingerprints
 ```

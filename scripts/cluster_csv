@@ -1,3 +1,4 @@
+import os
 import pickle
 from typing import List
 
@@ -5,7 +6,7 @@ import click
 import pandas as pd
 from rxn_utilities.file_utilities import is_path_creatable
 
-from ..clusterer import Clusterer
+from rxn_class_token.clustering.clusterer import Clusterer
 
 
 @click.command()
@@ -48,7 +49,7 @@ def main(
     # get the cluster id line by line, which is not efficient.
     def to_cluster_array(full_df: pd.DataFrame) -> List[int]:
         smiles = full_df[rxn_smiles_column].tolist()
-        return clusterer.get_cluster_nos(smiles, verbose=True)
+        return clusterer.get_cluster_nos(smiles, os.environ['FPS_MODEL_PATH'], verbose=True)
 
     df = df.assign(**{cluster_column: to_cluster_array})
 
