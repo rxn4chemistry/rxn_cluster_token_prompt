@@ -13,17 +13,15 @@ from .fingerprints import generate_fps
 FP_COLUMN = 'fps'
 RXN_SMILES_COLUMN = 'rxn'
 
-fps_model_path = '/Users/ato/Desktop/Git/rxnfp/rxnfp/models/transformers/bert_ft'  # The path to the trained fingerprints model
-# data_csv_path = '/Users/ato/Desktop/df.dummy.with-reagents.valid.csv'
-# fps_save_path = '/Users/ato/Desktop/df.dummy.with-reagents.valid.fps.pkl'
-data_csv_path = '/Users/ato/Library/CloudStorage/Box-Box/IBM RXN for Chemistry/Data/class_token/std_pistachio_201002/data.csv'
-fps_save_path = '/Users/ato/Library/CloudStorage/Box-Box/IBM RXN for Chemistry/Data/class_token/std_pistachio_201002/data.fps.pkl'
-
+# specify the variables
+# FPS_SAVE_PATH The path where to store the computed fingerprints
+# FPS_MODEL_PATH The path to the trained fingerprints model
+# DATA_CSV_PATH The path to the data on which to compute the fingerprints
 
 def ensure_fp(df: pd.DataFrame, saved_fp_path: Path) -> None:
     """Add the fingerprints to the DataFrame, compute them if did not exist."""
     if not saved_fp_path.exists():
-        fps = generate_fps(model=fps_model_path, reaction_smiles=df[RXN_SMILES_COLUMN].tolist(), verbose=True)
+        fps = generate_fps(model=os.environ['FPS_MODEL_PATH'], reaction_smiles=df[RXN_SMILES_COLUMN].tolist(), verbose=True)
         with open(saved_fp_path, 'wb') as f:
             pickle.dump(fps, f, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -34,6 +32,6 @@ def ensure_fp(df: pd.DataFrame, saved_fp_path: Path) -> None:
 
 
 def load_df() -> pd.DataFrame:
-    df = pd.read_csv(data_csv_path)
-    ensure_fp(df, Path(fps_save_path))  # Path(os.environ['FPS_SAVE_PATH'])
+    df = pd.read_csv(Path(os.environ['DATA_CSV_PATH']))
+    ensure_fp(df, Path(os.environ['FPS_SAVE_PATH']))
     return df
