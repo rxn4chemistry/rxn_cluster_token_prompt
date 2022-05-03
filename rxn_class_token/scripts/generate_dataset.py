@@ -77,7 +77,7 @@ def generate_dataset(
             f"Sorry, we could not find a column in the dataframe named {classes_column_name}!"
         )
 
-    # If json map file is given, map the NameRXN reaction class to the the correct token
+    # If json map file is given, map the NameRXN reaction class to the correct token
     # Otherwise look for a column providing directly the class tokens
     if map_file:
         with open(map_file) as f:
@@ -102,7 +102,7 @@ def generate_dataset(
 
         # Save the reactions with the token in front
         class_token_products = [
-            f"[{df['cluster_id']}] {df['product'].values[i]}" for i in range(len(df))
+            f"[{df['cluster_id'].values[i]}] {df['product'].values[i]}" for i in range(len(df))
         ]
         class_token_precursors = df.precursors.values
 
