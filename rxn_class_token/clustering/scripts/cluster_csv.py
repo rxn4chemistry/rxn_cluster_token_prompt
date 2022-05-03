@@ -50,6 +50,7 @@ def cluster_csv(
     df = df.assign(**{cluster_column: to_cluster_array})
 
     # Save as CSV
+    df.drop(labels=FP_COLUMN, axis=1, inplace=True)
     df.to_csv(output_csv, index=False)
 
 
