@@ -13,7 +13,7 @@ from rxn_class_token.clustering.data_loading import FP_COLUMN, load_df
 @click.option('--clusterer_pkl', type=str, required=True, help='Where to store the clusterer.')
 @click.option('--pca_components', type=int, default=3, help='The order of dimension reduction.')
 @click.option('--n_clusters', type=int, default=12, help='The number of clusters to use.')
-def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
+def create_clusterer(clusterer_pkl: str, pca_components: int, n_clusters: int):
     """Create a clusterer based on some reaction data.
 
     The clusterer is used later on to get the reaction class for the diversity
@@ -61,4 +61,4 @@ def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
 
 
 if __name__ == '__main__':
-    main()
+    create_clusterer()

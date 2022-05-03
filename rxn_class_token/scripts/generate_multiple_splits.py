@@ -4,15 +4,13 @@ import click
 import pandas as pd
 import os
 
+
 @click.command()
 @click.argument('input_csv_file', type=click.Path(exists=True), required=True)
 @click.argument('output_path', type=click.Path(exists=True), required=True)
 @click.option('--seed', multiple=True, type=int)
 @click.option('--split_ratio', default=0.1, type=float)
-def main(input_csv_file: str,
-         output_path: str,
-         seed: Tuple[int],
-         split_ratio: float):
+def generate_multiple_splits(input_csv_file: str, output_path: str, seed: Tuple[int], split_ratio: float):
     """
     Script to generate multiple random splits for a dataset
 
@@ -34,13 +32,16 @@ def main(input_csv_file: str,
         # Save the new dataframes to output_path/random${seed}
         try:
             os.makedirs(os.path.join(output_path, f"random{s}"))
-        except:
+        except OSError:
             print('The folder is already present, overwriting')
 
         test_df.to_csv(os.path.join(output_path, f"random{s}/df.test.csv"), index=False)
-        train_valid_df.to_csv(os.path.join(output_path, f"random{s}/df.train_valid.csv"), index=False)
+        train_valid_df.to_csv(
+            os.path.join(output_path, f"random{s}/df.train_valid.csv"), index=False
+        )
         valid_df.to_csv(os.path.join(output_path, f"random{s}/df.valid.csv"), index=False)
         train_df.to_csv(os.path.join(output_path, f"random{s}/df.train.csv"), index=False)
 
+
 if __name__ == "__main__":
-    main()
+    generate_multiple_splits()

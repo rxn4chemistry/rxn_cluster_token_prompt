@@ -2,12 +2,13 @@ import click
 import json
 from rxn_chemutils.tokenization import tokenize_smiles
 
+
 @click.command()
 @click.argument('input_file_path', type=click.Path(exists=True), required=True)
 @click.option('--product/--precursors', required=True)
 @click.option('--map-file', type=str, required=False)
 @click.option('--tokenize', type=bool, default=True)
-def main(input_file_path: str, product: str, map_file:str, tokenize:bool):
+def generate_prediction_dataset(input_file_path: str, product: str, map_file: str, tokenize: bool):
     """
     Script used to preprocess a dataset to be tested with one of the class token models.
 
@@ -22,7 +23,7 @@ def main(input_file_path: str, product: str, map_file:str, tokenize:bool):
     """
 
     with open(input_file_path) as f:
-        molecules = [line.strip().replace(' ','') for line in f]
+        molecules = [line.strip().replace(' ', '') for line in f]
 
     if tokenize:
         molecules = [tokenize_smiles(mol) for mol in molecules]
@@ -38,16 +39,13 @@ def main(input_file_path: str, product: str, map_file:str, tokenize:bool):
     print("Tokens for class_token model:", unique_values)
 
     if product:
-        class_token_molecules = [
-            f"[{i}] {elem}" for elem in molecules for i in unique_values
-        ]
+        class_token_molecules = [f"[{i}] {elem}" for elem in molecules for i in unique_values]
     else:
-        class_token_precursors = [
-            elem for elem in molecules for i in unique_values
-        ]
-    
+        class_token_molecules = [elem for elem in molecules for i in unique_values]
+
     for elem in class_token_molecules:
         print(elem)
 
+
 if __name__ == "__main__":
-    main()
+    generate_prediction_dataset()

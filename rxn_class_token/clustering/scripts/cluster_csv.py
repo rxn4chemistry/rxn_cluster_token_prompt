@@ -27,7 +27,7 @@ from rxn_class_token.clustering.clusterer import Clusterer
     required=True,
     help='Column to write the cluster id to.'
 )
-def main(
+def cluster_csv(
     input_csv: str, output_csv: str, clusterer_pkl: str, rxn_smiles_column: str,
     cluster_column: str
 ):
@@ -58,4 +58,4 @@ def main(
 
 
 if __name__ == '__main__':
-    main()
+    cluster_csv()

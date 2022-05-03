@@ -23,18 +23,13 @@ class Split(Enum):
 @click.option(
     '--output-type',
     default='train',
-    type=click.Choice(
-        ['train', 'train-with-valid', 'test', 'valid'], case_sensitive=True)
+    type=click.Choice(['train', 'train-with-valid', 'test', 'valid'], case_sensitive=True)
 )
 @click.option('--tokenize', type=bool, default=True)
-def main(input_csv_file: str,
-         output_path: str,
-         reaction_column_name: str,
-         classes_column_name: str,
-         class_token: bool,
-         map_file: str,
-         output_type: str,
-         tokenize: bool):
+def generate_dataset(
+    input_csv_file: str, output_path: str, reaction_column_name: str, classes_column_name: str,
+    class_token: bool, map_file: str, output_type: str, tokenize: bool
+):
     """
     Script to generate the files needed for training and testing the class_token model.
     Also the files for the baseline model (no class tokens), can be generated.
@@ -57,7 +52,9 @@ def main(input_csv_file: str,
     df = pd.read_csv(input_csv_file)
 
     if reaction_column_name not in df.columns:
-        raise KeyError(f"Sorry, we could not find a column in the dataframe named {reaction_column_name}!")
+        raise KeyError(
+            f"Sorry, we could not find a column in the dataframe named {reaction_column_name}!"
+        )
 
     df['product'] = df[f"{reaction_column_name}"].apply(lambda x: x.split('>>')[1].strip())
     df['precursors'] = df[f"{reaction_column_name}"].apply(lambda x: x.split('>>')[0].strip())
@@ -76,24 +73,38 @@ def main(input_csv_file: str,
         return 0
 
     if classes_column_name not in df.columns:
-        raise KeyError(f"Sorry, we could not find a column in the dataframe named {classes_column_name}!")
+        raise KeyError(
+            f"Sorry, we could not find a column in the dataframe named {classes_column_name}!"
+        )
 
-    # If no json map file is given, use all 12 class tokens
-    if not map_file:
-        classes_map = {f"{i}": f"{i}" for i in range(0, 12)}
-    else:
+    # If json map file is given, map the NameRXN reaction class to the the correct token
+    # Otherwise look for a column providing directly the class tokens
+    if map_file:
         with open(map_file) as f:
             classes_map = json.load(f)
 
-    unique_values = sorted(set(classes_map.values()), key=lambda x: int(x))
-    print("Tokens for class_token model:", unique_values)
+        unique_values = sorted(set(classes_map.values()), key=lambda x: int(x))
+        print("Tokens for class_token model:", unique_values)
 
-    # Save the reactions with the token in front
-    class_token_products = [
-        f"[{classes_map[str(df[f'{classes_column_name}'].values[i])]}] {df['product'].values[i]}"
-        for i in range(len(df))
-    ]
-    class_token_precursors = df.precursors.values
+        # Save the reactions with the token in front
+        class_token_products = [
+            f"[{classes_map[str(df[f'{classes_column_name}'].values[i])]}] {df['product'].values[i]}"
+            for i in range(len(df))
+        ]
+        class_token_precursors = df.precursors.values
+
+    else:
+        if 'cluster_id' not in df.columns:
+            raise KeyError("Sorry, we could not find a column in the dataframe named cluster_id!")
+
+        unique_values = sorted(set(df['cluster_id'].values))
+        print("Tokens for class_token model:", unique_values)
+
+        # Save the reactions with the token in front
+        class_token_products = [
+            f"[{df['cluster_id']}] {df['product'].values[i]}" for i in range(len(df))
+        ]
+        class_token_precursors = df.precursors.values
 
     with open(os.path.join(output_path, f"precursors-{output_type}.txt"), 'w') as f:
         f.write('\n'.join(class_token_precursors))
@@ -107,9 +118,7 @@ def main(input_csv_file: str,
         class_token_products = [
             f"[{i}] {elem}" for elem in df['product'].values for i in unique_values
         ]
-        class_token_precursors = [
-            elem for elem in df['precursors'].values for i in unique_values
-        ]
+        class_token_precursors = [elem for elem in df['precursors'].values for i in unique_values]
 
         with open(os.path.join(output_path, f"precursors-{output_type}-extended.txt"), 'w') as f:
             f.write('\n'.join(class_token_precursors))
@@ -118,4 +127,4 @@ def main(input_csv_file: str,
 
 
 if __name__ == "__main__":
-    main()
+    generate_dataset()
