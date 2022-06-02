@@ -94,7 +94,7 @@ def cluster_csv(
                         break
                     index = random.randrange(start=0, stop=len(unique_classes), )
                     removed_element = unique_classes.pop(index)
-                    clusters_map[f"{i}"].append(removed_element)
+                    clusters_map[i].append(removed_element)
 
             inverted_clusters_map = {i: k for k, v in clusters_map.items() for i in v}
             logger.info(f"Random clusters map: {inverted_clusters_map}")
