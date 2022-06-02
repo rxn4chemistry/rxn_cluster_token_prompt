@@ -12,7 +12,6 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.NullHandler())
 
 FP_COLUMN = 'fps'
-RXN_SMILES_COLUMN = 'rxn'
 
 
 def ensure_fp(df: pd.DataFrame, saved_fp_path: Path) -> None:
@@ -21,7 +20,7 @@ def ensure_fp(df: pd.DataFrame, saved_fp_path: Path) -> None:
         logger.info("Fingerprints not available. Computing them ...")
         fps = generate_fps(
             model=os.environ['FPS_MODEL_PATH'],
-            reaction_smiles=df[RXN_SMILES_COLUMN].tolist(),
+            reaction_smiles=df[os.environ['RXN_SMILES_COLUMN']].tolist(),
             verbose=True
         )
         with open(saved_fp_path, 'wb') as f:
