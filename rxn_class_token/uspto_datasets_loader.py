@@ -36,8 +36,6 @@ def canonicalize_rxn(smiles: str) -> str:
 class USPTOLoader:
 
     def __init__(self, dataset_name: str):
-        print(dataset_name)
-        print(USPTO_URLS.keys())
         if dataset_name not in list(USPTO_URLS.keys()):
             raise ValueError(f"The provided dataset name {dataset_name} is not available.")
         self.dataset_name = dataset_name

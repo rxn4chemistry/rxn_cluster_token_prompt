@@ -68,7 +68,7 @@ def main(input_csv_file: str, output_path: str, model_type: str, rxn_column_name
         raise KeyError(
             f"The column '{class_column_name}' was not found in the data. Cannot generate files for classification."
         )
-    if model == ModelType.retro and cluster_column_name not in df.columns:
+    if not baseline and model == ModelType.retro and cluster_column_name not in df.columns:
         raise KeyError(
             f"The column '{cluster_column_name}' was not found in the data. Cannot generate files for retro."
         )
