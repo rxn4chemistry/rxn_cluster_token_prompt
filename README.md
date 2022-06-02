@@ -25,6 +25,28 @@ yapf -ipr .
 mypy .
 flake8
 ```
+
+## USPTO Datasets generation
+To generate the files for training the chemistry puppeteer models
+as well as a forward and a classification model for the analysis, 
+first download the dataset and preprocess it:
+```python
+from rxn_class_token.uspto_datasets_loader import USPTOLoader
+loader = USPTOLoader('USPTO_50K')
+loader.download_dataset()
+loader.process_dataset()
+```
+Results are saved in `path_to_this_repo/data/uspto`.
+
+Then, you can generate the files for training and inference with the command:
+```bash
+generate_dataset_files data/uspto/USPTO_50K_processed.csv your_output_dir 
+                       --rxn-column-name reactions_can
+                       --cluster-column-name class 
+                       --model-type retro
+```
+For options on how to use the command for forward and classification files run `generate_dataset_files --help`
+
 ## Datasets generation
 The data for pistachio is stored in the ibm box folder. 
 Click [here](https://ibm.box.com/s/228otc58sl19evweosamxgyjf66cv025) to access the files

@@ -44,13 +44,12 @@ def main(input_csv_file: str, output_path: str, model_type: str, rxn_column_name
     output_path: where to store the output files
     model_type: forward, retro or classification
     rxn_column_name: column under which reaction SMILES are stored
-    class_column_name: column under which the classes are stored
+    class_column_name: column under which the reaction classes are stored
     cluster_column_name: column under which the clustering ids are stored
     seed: the seed used for generating the split
     split_ratio: the test and valid set ratio
     baseline: whether the model is the baseline model (in this case no class tokens are added to retro files)
     """
-
     df = pd.read_csv(input_csv_file)
     print(df.head())
 
