@@ -17,6 +17,13 @@ def data_directory() -> Path:
     return root_directory() / 'data'
 
 
+def models_directory() -> Path:
+    """
+    Returns the path to the data directory at the root of the repository
+    """
+    return root_directory() / 'models'
+
+
 def notebooks_directory() -> Path:
     """
     Returns the path to the notebooks directory at the root of the repository
