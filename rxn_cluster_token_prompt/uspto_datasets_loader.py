@@ -12,7 +12,6 @@ from rxn_cluster_token_prompt.onmt_utils.utils import maybe_canonicalize_rxn
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-logging.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=logging.INFO)
 
 DEFAULT_DIR = data_directory() / 'uspto'
 
@@ -25,6 +24,8 @@ USPTO_URLS = {
 
 
 class USPTOLoader:
+    """https://github.com/deepchem/deepchem/blob/master/deepchem/molnet/load_function/uspto_datasets.py
+    """
 
     def __init__(self, dataset_name: str):
         if dataset_name not in list(USPTO_URLS.keys()):
@@ -32,7 +33,9 @@ class USPTOLoader:
         self.dataset_name = dataset_name
         self.dataset_url = USPTO_URLS[self.dataset_name]
 
-    def download_dataset(self):
+    def download_dataset(self) -> None:
+        """Function to download the USPTO datasets
+        """
         if not (DEFAULT_DIR / f"{self.dataset_name}.csv").exists():
             logger.info("Downloading dataset...")
             download_url(
@@ -40,7 +43,12 @@ class USPTOLoader:
             )
             logger.info("Dataset download complete.")
 
-    def process_dataset(self, canonicalize: bool = True, single_product: bool = True):
+    def process_dataset(self, canonicalize: bool = True, single_product: bool = True) -> None:
+        """Function to process the dataset after the download.
+        Args:
+            canonicalize: whether to canonicalize the downloaded reactions
+            single_product: whether to keep only single product reactions
+        """
         if not (DEFAULT_DIR / f"{self.dataset_name}.csv").exists():
             raise ValueError("The dataset was not found!")
         df = pd.read_csv(DEFAULT_DIR / f"{self.dataset_name}.csv")

@@ -6,6 +6,7 @@ from pathlib import Path
 
 def download_url(url: str, dest_dir: Path, name: Optional[str] = None):
     """Download a file to disk.
+    from https://github.com/deepchem/deepchem/blob/master/deepchem/utils/data_utils.py
     Parameters
     ----------
     url: str

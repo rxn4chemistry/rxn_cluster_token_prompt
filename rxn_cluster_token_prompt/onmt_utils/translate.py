@@ -2,7 +2,7 @@ import logging
 import subprocess
 from typing import List, Optional
 
-from rxn_utilities.file_utilities import PathLike, iterate_lines_from_file
+from rxn.utilities.files import PathLike, iterate_lines_from_file
 
 from rxn_cluster_token_prompt.onmt_utils.translator import Translator
 

@@ -1,12 +1,17 @@
 import pickle
+import logging
 
 import click
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
+from rxn.utilities.logging import setup_console_logger
 from rxn_cluster_token_prompt.clustering.clusterer import ClustererFitter, inspect_clusters, Clusterer
 from rxn_cluster_token_prompt.clustering.data_loading import FP_COLUMN, load_df
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 @click.command()
@@ -26,20 +31,21 @@ def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
     The clusterer is used later on to get the reaction class for the diversity
     model relying on class tokens."""
 
+    setup_console_logger()
     selected_fp_column = FP_COLUMN
 
     # Load Data
     df = load_df()
     fps = np.array(df[selected_fp_column].tolist())
-    print('Loaded fingerprints to train clustering algorithm:', len(fps))
+    logger.info('Loaded fingerprints to train clustering algorithm:', len(fps))
 
     all_fps = fps
-    print('Merged, shuffled:', len(all_fps))
+    logger.info('Merged, shuffled:', len(all_fps))
 
     pca = PCA(n_components=pca_components)
     kmeans = KMeans(n_clusters=n_clusters)
 
-    print('Fitting clusterer...')
+    logger.info('Fitting clusterer...')
     _ = ClustererFitter(
         data=all_fps,
         scaler=pca,
@@ -48,22 +54,22 @@ def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
         fit_scaler_on=len(all_fps),
         fit_clusterer_on=len(all_fps),
     )
-    print('Fitting clusterer... Done.')
+    logger.info('Fitting clusterer... Done.')
 
     clusterer = Clusterer(pca=pca, kmeans=kmeans)
 
-    print('Clusters')
+    logger.info('Clusters')
     inspect_clusters(clusterer, all_fps)
 
-    print(f'Saving clusterer to {clusterer_pkl}...')
+    logger.info(f'Saving clusterer to {clusterer_pkl}...')
     with open(clusterer_pkl, 'wb') as f:
         pickle.dump(clusterer, f)
-    print(f'Saving clusterer to {clusterer_pkl}... Done')
+    logger.info(f'Saving clusterer to {clusterer_pkl}... Done')
 
-    print('\n\nCheck: reloading the clusterer, should print exact same values as above')
+    logger.info('\n\nCheck: reloading the clusterer, should print exact same values as above')
     with open(clusterer_pkl, 'rb') as f:
         loaded: Clusterer = pickle.load(f)
-    print('Clusters')
+    logger.info('Clusters')
     inspect_clusters(loaded, all_fps)
 
 

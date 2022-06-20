@@ -1,10 +1,10 @@
 import logging
+from pathlib import Path
 from typing import List, Iterable
 
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 logger.addHandler(logging.NullHandler())
 
 
@@ -13,14 +13,14 @@ def get_model_and_tokenizer(model_path: str, force_no_cuda: bool = False):
     from transformers import BertModel
     from rxnfp.tokenization import SmilesTokenizer
 
-    tokenizer_vocab_path = model_path + '/vocab.txt'
+    tokenizer_vocab_path = Path(model_path) / 'vocab.txt'
     device = torch.device("cuda" if (torch.cuda.is_available() and not force_no_cuda) else "cpu")
 
     model = BertModel.from_pretrained(model_path)
     model = model.eval()
     model.to(device)
 
-    tokenizer = SmilesTokenizer(tokenizer_vocab_path)
+    tokenizer = SmilesTokenizer(str(tokenizer_vocab_path))
     return model, tokenizer
 
 

@@ -5,7 +5,6 @@ from rxn_cluster_token_prompt.onmt_utils.metrics import get_multiplier
 from rxn_cluster_token_prompt.onmt_utils.translator import Translator
 from rxn_cluster_token_prompt.repo_utils import models_directory
 from typing import List, Dict, Tuple
-from rxn.utilities.logging import setup_console_logger
 from rxn.chemutils.tokenization import tokenize_smiles, detokenize_smiles
 from rxn.chemutils.conversion import canonicalize_smiles
 from rxn_cluster_token_prompt.onmt_utils.utils import maybe_canonicalize, compute_probabilities, create_rxn
@@ -14,7 +13,6 @@ from rxn_cluster_token_prompt.onmt_utils.utils import convert_class_token_idx_fo
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-setup_console_logger()
 
 RETRO_MODEL_LOCATION_DICT = {
     "10clusters": models_directory() / "10clusters" / "10clusters.pt",
@@ -48,10 +46,17 @@ class RXNClusterTokenPrompt:
         n_best: int = 2
     ):
         """
-        RXNMapper constructor.
+        RXNClusterTokenPrompt constructor.
         Args:
-            config (Dict): Config dict, leave it empty to have the
-                default USPTO model.
+            retro_model_path: the path to the trined single-step retrosynthesis model
+            forward_model_path: the path to the trained forward predictiion model
+            classification_model_path: the path to the trained reaction classification model
+            n_tokens: the number of cluster tokens in the chosen single-step retrosynthesis model
+            beam_size: the beam for the models predictions
+            max_length: maximum sequence length
+            batch_size: the batch size for inference
+            n_best: the number of predictions to retain for each used token prompt. Nees to be <= beam_size.
+        Leave arguments empty to get default model
         """
 
         self.retro_model_path = retro_model_path
@@ -73,8 +78,25 @@ class RXNClusterTokenPrompt:
         remove_invalid_retro_predictions=True,
         probabilities=True,
         reorder_by_forward_likelihood=False,
-        display=False
-    ) -> Dict[str, List[tuple]]:
+        verbose=False
+    ) -> Dict[str, List[Tuple[str, str, float, str, float, int]]]:
+        """Function to run predictions with the RXNClusterTokenPrompt model.
+
+        Args:
+            products: products SMILES on which to run the predictions
+            canonicalize_input: whether the input products are to be canonicalized
+            canonicalize_output: whether the output of the model is to be canonicalized
+            remove_invalid_retro_predictions: whether to remove the invalid retro predictions.
+                if True, replaces the invalid predictions with an empty string
+            probabilities: whether to compute probabilities from the log likelihood returned by the model
+            reorder_by_forward_likelihood: whether to reorder the otput predictions by decreasing forward confidence
+            verbose: allows for better display of the predictions
+
+        Returns:
+            A tuple so composed:
+            (target, predicted_precursors, retro_confidence, predicted_product, forward_confidence, predicted_class)
+
+        """
         if len(products) > 64:
             logger.info("Requesting translation on many products ...might be slow")
         if canonicalize_input:
@@ -161,7 +183,7 @@ class RXNClusterTokenPrompt:
                 if remove_invalid_retro_predictions else _forward_and_classification_prediction(res[i: i + multiplier])
             if reorder_by_forward_likelihood:
                 output[product] = sorted(output[product], key=lambda x: x[3], reverse=True)
-            if display:
+            if verbose:
                 print("Target molecule: ", product)
                 for prediction in output[product]:
                     self._display(prediction)

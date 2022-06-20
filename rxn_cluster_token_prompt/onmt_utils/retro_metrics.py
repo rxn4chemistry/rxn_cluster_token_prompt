@@ -1,7 +1,7 @@
 import os
 from typing import Any, Dict, Iterable, Optional
 
-from rxn_utilities.file_utilities import PathLike, iterate_lines_from_file
+from rxn.utilities.files import PathLike, iterate_lines_from_file
 
 from rxn_cluster_token_prompt.onmt_utils.metrics import class_diversity, coverage, round_trip_accuracy, top_n_accuracy
 from rxn_cluster_token_prompt.onmt_utils.utils import RetroFiles

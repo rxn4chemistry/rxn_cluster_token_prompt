@@ -5,6 +5,7 @@ from typing import List, Tuple, Union
 import click
 from rxn.utilities.containers import chunker
 from rxn.utilities.files import dump_list_to_file, load_list_from_file
+from rxn.utilities.logging import setup_console_logger
 
 from rxn_cluster_token_prompt.onmt_utils.metrics import get_multiplier
 from rxn_cluster_token_prompt.onmt_utils.utils import RetroFiles
@@ -123,7 +124,8 @@ def main(
     classes_predictions_file: str,
     n_class_tokens: int,
 ) -> None:
-    logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s", level="INFO")
+
+    setup_console_logger()
 
     # Note: we put the actual code in a separate function, so that it can be
     # called also as a Python function.

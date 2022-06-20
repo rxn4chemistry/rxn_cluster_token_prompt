@@ -7,14 +7,14 @@ from typing import List, Optional, Dict
 
 import click
 import pandas as pd
-from rxn_utilities.file_utilities import is_path_creatable
+from rxn.utilities.files import is_path_creatable
+from rxn.utilities.logging import setup_console_logger
 
 from rxn_cluster_token_prompt.clustering.clusterer import Clusterer
 from rxn_cluster_token_prompt.clustering.data_loading import ensure_fp, FP_COLUMN
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-logging.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=logging.INFO)
 
 
 @click.command()
@@ -51,6 +51,7 @@ def main(
     input_csv: str, output_csv: str, clusterer_pkl: Optional[str],
     n_clusters_random: Optional[int], cluster_column: str, class_column: str
 ):
+    setup_console_logger()
     """Get the cluster number and add it as a new column to a CSV."""
     if clusterer_pkl is not None and n_clusters_random is not None:
         raise ValueError("Choose between '--clusterer_pkl' and '--n_clusters_random'.")

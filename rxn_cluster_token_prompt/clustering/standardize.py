@@ -1,13 +1,12 @@
 import logging
 
-from rxn_chemutils.exceptions import InvalidSmiles
-from rxn_chemutils.reaction_equation import (
+from rxn.chemutils.exceptions import InvalidSmiles
+from rxn.chemutils.reaction_equation import (
     merge_reactants_and_agents, sort_compounds, canonicalize_compounds, remove_duplicate_compounds
 )
-from rxn_chemutils.reaction_smiles import parse_any_reaction_smiles
+from rxn.chemutils.reaction_smiles import parse_any_reaction_smiles
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 logger.addHandler(logging.NullHandler())
 
 

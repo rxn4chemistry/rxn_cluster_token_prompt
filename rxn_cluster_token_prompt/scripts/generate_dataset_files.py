@@ -6,12 +6,12 @@ import logging
 import pandas as pd
 
 from pathlib import Path
-from rxn_utilities.file_utilities import dump_list_to_file
-from rxn_chemutils.tokenization import tokenize_smiles
+from rxn.utilities.files import dump_list_to_file
+from rxn.chemutils.tokenization import tokenize_smiles
+from rxn.utilities.logging import setup_console_logger
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-logging.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=logging.INFO)
 
 
 class ModelType(Enum):
@@ -30,8 +30,7 @@ def tokenize_smiles_list(smiles_list: List[str]) -> List[str]:
     '-i',
     type=click.Path(exists=True),
     required=True,
-    help=
-    "Path to the csv file containing the reaction smiles and optionally the reaction class information."
+    help="Path to the csv file containing the reaction smiles and optionally the reaction class information."
 )
 @click.option(
     '--output_path', '-o', type=click.Path(exists=True), required=True, help="Output path"
@@ -71,8 +70,7 @@ def tokenize_smiles_list(smiles_list: List[str]) -> List[str]:
     '--baseline',
     default=False,
     is_flag=True,
-    help=
-    "Whether the model files are for the baseline retro model (in this case no class tokens are added)"
+    help="Whether the model files are for the baseline retro model (in this case no class tokens are added)"
 )
 def main(
     input_csv_file: str, output_path: str, model_type: str, rxn_column_name: str,
@@ -81,6 +79,8 @@ def main(
     """Script to generate multiple random splits for a dataset for forward, retro or classification model
     training.
     """
+    setup_console_logger()
+
     df = pd.read_csv(input_csv_file)
     print(df.head())
 

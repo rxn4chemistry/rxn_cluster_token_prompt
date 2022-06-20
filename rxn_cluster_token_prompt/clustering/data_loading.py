@@ -5,10 +5,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from .fingerprints import generate_fps
+from rxn_cluster_token_prompt.clustering.fingerprints import generate_fps
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 logger.addHandler(logging.NullHandler())
 
 FP_COLUMN = 'fps'

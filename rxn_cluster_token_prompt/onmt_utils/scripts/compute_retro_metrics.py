@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 
 import click
-from rxn_utilities.logging_utilities import setup_console_logger
+from rxn.utilities.logging import setup_console_logger
 
 from rxn_cluster_token_prompt.onmt_utils.retro_metrics import RetroMetrics
 from rxn_cluster_token_prompt.onmt_utils.utils import RetroFiles

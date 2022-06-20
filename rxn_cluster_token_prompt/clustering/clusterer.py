@@ -7,11 +7,10 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from tqdm import tqdm
 
-from .fingerprints import generate_fps
-from .standardize import standardize_for_fp_model
+from rxn_cluster_token_prompt.clustering.fingerprints import generate_fps
+from rxn_cluster_token_prompt.clustering.standardize import standardize_for_fp_model
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 logger.addHandler(logging.NullHandler())
 
 
