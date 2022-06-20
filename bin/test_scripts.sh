@@ -7,7 +7,7 @@ VALID_SRC="${PWD}/data/test_data/product-valid.txt"
 VALID_TGT="${PWD}/data/test_data/precursors-valid.txt"
 
 PREPROCESSDIR="${PWD}/data/test_data/preprocess" # were to store the preprocessed files and the vocab
-mkdir ${PREPROCESSDIR}
+mkdir -p ${PREPROCESSDIR}
 
 # ONMT PREPROCESS
 onmt_preprocess -train_src ${TRAIN_SRC} \
@@ -72,12 +72,12 @@ N_CLASS_TOKENS=10 # Number of class tokens of the trained model
 # The scripts saves the new files with the `.reordered` extension. The reordering needs NOT to be executed
 # for the baseline model
 
-reorder-retro-predictions-class-token --ground_truth_file ${GROUND_TRUTH_FILE} \
-                                      --predictions_file ${PREDICTIONS_FILE} \
-                                      --confidences_file ${CONFIDENCES_FILE} \
-                                      --fwd_predictions_file ${FWD_PREDICTIONS_FILE} \
-                                      --classes_predictions_file ${CLASSES_PREDICTIONS_FILE} \
-                                      --n_class_tokens ${N_CLASS_TOKENS}
+reorder-retro-predictions --ground_truth_file ${GROUND_TRUTH_FILE} \
+                          --predictions_file ${PREDICTIONS_FILE} \
+                          --confidences_file ${CONFIDENCES_FILE} \
+                          --fwd_predictions_file ${FWD_PREDICTIONS_FILE} \
+                          --classes_predictions_file ${CLASSES_PREDICTIONS_FILE} \
+                          --n_class_tokens ${N_CLASS_TOKENS}
 
 # Now compute the metrics: remove the `--reordered` flag to get results for the baseline model
 
