@@ -14,7 +14,7 @@ pip install -e .
 ```
 For development
 ```bash
-pip install -e .\[dev]
+pip install -e .[dev]
 ```
 Install reaction fingerprint in a different folder (this is used to create the tokens based on clustering reaction fingerprints)
 ```bash
