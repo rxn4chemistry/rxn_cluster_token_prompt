@@ -5,15 +5,15 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
-from rxn_class_token.clustering.clusterer import ClustererFitter, inspect_clusters, Clusterer
-from rxn_class_token.clustering.data_loading import FP_COLUMN, load_df
+from rxn_cluster_token_prompt.clustering.clusterer import ClustererFitter, inspect_clusters, Clusterer
+from rxn_cluster_token_prompt.clustering.data_loading import FP_COLUMN, load_df
 
 
 @click.command()
 @click.option('--clusterer_pkl', type=str, required=True, help='Where to store the clusterer.')
 @click.option('--pca_components', type=int, default=3, help='The order of dimension reduction, default is 3.')
 @click.option('--n_clusters', type=int, default=10, help='The number of clusters to use, default is 10.')
-def create_clusterer(clusterer_pkl: str, pca_components: int, n_clusters: int):
+def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
     """Create a clusterer based on some reaction data.
 
     The clusterer is used later on to get the reaction class for the diversity
@@ -61,4 +61,4 @@ def create_clusterer(clusterer_pkl: str, pca_components: int, n_clusters: int):
 
 
 if __name__ == '__main__':
-    create_clusterer()
+    main()

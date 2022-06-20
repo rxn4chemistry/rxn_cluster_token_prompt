@@ -1,16 +1,16 @@
 """Rxn cluster token prompt wrapper for the models."""
 import logging
 
-from rxn_class_token.onmt_utils.metrics import get_multiplier
-from rxn_class_token.onmt_utils.translator import Translator
-from rxn_class_token.repo_utils import models_directory
+from rxn_cluster_token_prompt.onmt_utils.metrics import get_multiplier
+from rxn_cluster_token_prompt.onmt_utils.translator import Translator
+from rxn_cluster_token_prompt.repo_utils import models_directory
 from typing import List, Dict, Tuple
 from rxn.utilities.logging import setup_console_logger
 from rxn.chemutils.tokenization import tokenize_smiles, detokenize_smiles
 from rxn.chemutils.conversion import canonicalize_smiles
-from rxn_class_token.onmt_utils.utils import maybe_canonicalize, compute_probabilities, create_rxn
+from rxn_cluster_token_prompt.onmt_utils.utils import maybe_canonicalize, compute_probabilities, create_rxn
 
-from rxn_class_token.onmt_utils.utils import convert_class_token_idx_for_tranlation_models
+from rxn_cluster_token_prompt.onmt_utils.utils import convert_class_token_idx_for_translation_models
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -48,11 +48,6 @@ class RXNClusterTokenPrompt:
         Args:
             config (Dict): Config dict, leave it empty to have the
                 default USPTO model.
-
-            Example:
-
-            >>> from rxn_class_token.model import RXNClusterTokenPrompt
-            >>> retro_model = RXNClusterTokenPrompt()
         """
 
         # Config takes "retro_model_path", "forward_model_path", "classification_model_path" and other params
@@ -83,7 +78,7 @@ class RXNClusterTokenPrompt:
 
         # Prompt preparation
         class_token_products = (
-            f"{convert_class_token_idx_for_tranlation_models(class_token_idx)}{molecule}"
+            f"{convert_class_token_idx_for_translation_models(class_token_idx)}{molecule}"
             for molecule in products
             for class_token_idx in range(self.n_tokens)
         )

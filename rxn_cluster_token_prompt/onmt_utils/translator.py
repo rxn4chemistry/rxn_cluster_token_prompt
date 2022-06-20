@@ -6,7 +6,7 @@
 from argparse import Namespace
 from typing import Any, Iterable, Iterator, List, Optional, Union
 
-from rxn_class_token.onmt_utils.internal_translation_utils import RawTranslator, TranslationResult, get_onmt_opt
+from rxn_cluster_token_prompt.onmt_utils.internal_translation_utils import RawTranslator, TranslationResult, get_onmt_opt
 
 
 class Translator:

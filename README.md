@@ -1,29 +1,28 @@
-# The Chemistry Puppetter
+# Enhancing diversity in language based models for single-stepretrosynthesis
 
 Enable diversity in single-step retrosynthesis models. The models were
 trained using the [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) framework.
-PROBLEM: we use an internal version!!!
 
 ### Install / Build
 #### Create Environment and Install
 ```bash
-conda create -n rxn-class-token python=3.6
+conda create -n rxn-cluster-token-prompt python=3.6
 conda install -c rdkit rdkit=2020.03.1 # must be installed manually
-git clone git@github.ibm.com:ATO/rxn_class_token.git
-cd rxn_class_token/
+git clone git@github.ibm.com:ATO/rxn_cluster_token_prompt.git
+cd rxn_cluster_token_prompt/
 pip install -e .
 ```
 For development
 ```bash
 pip install -e .\[dev]
 ```
-Install reaction fingerprint
+Install reaction fingerprint in a different folder (this is used to create the tokens based on clustering reaction fingerprints)
 ```bash
 git clone git@github.com:rxn4chemistry/rxnfp.git
 cd rxnfp/
 pip install -e .
 ```
-Before committing, please run
+When developing, before committing please run
 ```bash
 yapf -ipr .
 mypy .
@@ -31,13 +30,43 @@ flake8
 ```
 
 ### Try it out!
+You can easily try out the rxn cluster token prompt model for high diversity retrosynthesis
+predictions with 3 lines of code:
+```python
+from rxn_cluster_token_prompt.model import RXNClusterTokenPrompt
+retro_model = RXNClusterTokenPrompt(config={"n_best": 1})
+retro_model.retro_predict(["CCN(CC)Cc1ccc(-c2nc(C)c(COc3ccc([C@H](CC(=O)N4C(=O)OC[C@@H]4Cc4ccccc4)c4ccon4)cc3)s2)cc1"], reorder_by_forward_likelihood=True, display=True)
+```
+
+The code above calls the default model (10clusters on USPTO). 
+The `n_best` is the number of predictions per token to retain. 
+Check the next section on how you can use different models!
+
+### Try it out!
+To make predictions with a different model you can change the following options
+to the config:
+```python
+config = {
+    "retro_model_path": "the_path_to_your_retro_model", 
+    "forward_model_path": "the_path_to_your_forward_model", 
+    "classification_model_path": "the_path_to_your_classification_model", 
+    "n_tokens": 10, # the number of cluster tokens your model was trained on
+    "beam_size": 20, # the beam size
+    "max_length": 300 , # the maximum number of tokens in your sample
+    "batch_size": 64, # the batch size for predictions
+    "n_best": 5 # the number of predictions to retain for each token
+}
+```
+
+To make predictions on a bigger dataset we reccomend to use the procedure outlined
+below (after the USPTO dataset preparation), as the one above is not implemented for gpus.
 
 ### USPTO Datasets generation
-To generate the files for training the chemistry puppeteer models
+To generate the files for training the high diversity models
 as well as a forward and a classification model for the analysis, 
 first download the dataset and preprocess it:
 ```python
-from rxn_class_token.uspto_datasets_loader import USPTOLoader
+from rxn_cluster_token_prompt.uspto_datasets_loader import USPTOLoader
 loader = USPTOLoader('USPTO_50K')
 loader.download_dataset()
 loader.process_dataset()
@@ -46,7 +75,7 @@ Results are saved in `path_to_this_repo/data/uspto`.
 
 Then, you can generate the files for training and inference with the command:
 ```bash
-generate-dataset-files --input_csv_file data/uspto/USPTO_50K_processed.csv
+generate-dataset-files --input_csv_file path_to_this_repo/data/uspto/USPTO_50K_processed.csv
                        --output_path your_output_path
                        --rxn-column-name reactions_can
                        --cluster-column-name class 
@@ -55,9 +84,9 @@ generate-dataset-files --input_csv_file data/uspto/USPTO_50K_processed.csv
 For options on how to use the command run `generate-dataset-files --help`.
 The model-type can be either `retro`,`forward`,`classification`
 
-By specifying the `--cluster-colum-name` you can choose how to build your Chemistry Puppeteer model.
+By specifying the `--cluster-colum-name` you can choose how to build your cluster token prompt model.
 The column `class` in USPTO contains the reaction classes. To see how to choose
-a different clustering technique, please check the next section.
+a different clustering technique, check the next section.
 
 When the flag `--baseline` is passed together with the `retro` model type, the data
 for the baseline retrosynthesis model is generated.
@@ -107,12 +136,21 @@ generate-dataset-files --input_csv_file path_to_this_repo/data/uspto/USPTO_50K_p
                        --cluster-column-name cluster_id 
                        --model-type retro
 ```
+The files will be saved under `your_output_dir/random5`, where 5 is the random seed used to 
+generate the splits. You can change the seed with the `--seed` option.
 
-### TRAINING
+### Training
+To train the models you can costumize the script `bin/training.sh` and run it on a system with 
+one gpu. The USPTO models were trained up to 130000 steps (roughly 24 hours).
 
-### PREDICTION
+### Prediction
 
-### EVALUATION
+Once your models are trained you can run the predictions with the custumizable script `bin/translate.sh` on a system with 
+one gpu.
 
-### USE THE MODEL
+### Evaluation
+
+To evaluate your models you can costumize the script `bin/compute_metrics.sh`. The output is a json file called metrics.json
+where the values of accuracy, round-trip accuracy, class-diversity and coverage are reported.
+
 

@@ -7,8 +7,8 @@ import logging
 import pandas as pd
 from rdkit import Chem
 
-from rxn_class_token.repo_utils import data_directory
-from rxn_class_token.utils import download_url
+from rxn_cluster_token_prompt.repo_utils import data_directory
+from rxn_cluster_token_prompt.utils import download_url
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())

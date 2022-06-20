@@ -127,7 +127,6 @@ def class_diversity(
         for i, (pred, pred_class) in enumerate(preds_and_classes):
             if gt == pred and pred_class != "":
                 classes.add(pred_class)
-            print(classes, len(classes))
             classes_for_n[i].append(len(classes))
 
     # Note: the total number of predictions to take into account for the "n"-th (= "i+1"th)

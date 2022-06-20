@@ -4,9 +4,6 @@
 # (C) Copyright IBM Corp. 2021
 # ALL RIGHTS RESERVED
 
-# Since the rxn_chemutils dependency requires an environment variable, the
-# install_requires variable must be set here instead of setup.cfg.
-
 from setuptools import setup
 
 setup(

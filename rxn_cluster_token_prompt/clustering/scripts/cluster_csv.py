@@ -9,8 +9,8 @@ import click
 import pandas as pd
 from rxn_utilities.file_utilities import is_path_creatable
 
-from rxn_class_token.clustering.clusterer import Clusterer
-from rxn_class_token.clustering.data_loading import ensure_fp, FP_COLUMN
+from rxn_cluster_token_prompt.clustering.clusterer import Clusterer
+from rxn_cluster_token_prompt.clustering.data_loading import ensure_fp, FP_COLUMN
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -37,7 +37,7 @@ logging.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=logg
     required=False,
     help="Column where the reaction classes are stored, default 'class'."
 )
-def cluster_csv(
+def main(
         input_csv: str, output_csv: str, clusterer_pkl: Optional[str], n_clusters_random: Optional[int],
         cluster_column: str, class_column: str
 ):
@@ -111,4 +111,4 @@ def cluster_csv(
 
 
 if __name__ == '__main__':
-    cluster_csv()
+    main()
