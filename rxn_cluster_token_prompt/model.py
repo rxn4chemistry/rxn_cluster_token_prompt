@@ -41,7 +41,14 @@ class RXNClusterTokenPrompt:
 
     def __init__(
             self,
-            config: Dict = {},
+            retro_model_path: str = RETRO_MODEL_LOCATION_DICT["10clusters"],
+            forward_model_path: str = FORWARD_MODEL_LOCATION_DICT["forwardUSPTO"],
+            classification_model_path: str = CLASSIFICATION_MODEL_LOCATION_DICT["classificationUSPTO"],
+            n_tokens: int = RETRO_MODEL_TOKENS_DICT["10clusters"],
+            beam_size: int = 10,
+            max_length: int = 300,
+            batch_size: int = 64,
+            n_best: int = 2
     ):
         """
         RXNMapper constructor.
@@ -50,21 +57,14 @@ class RXNClusterTokenPrompt:
                 default USPTO model.
         """
 
-        # Config takes "retro_model_path", "forward_model_path", "classification_model_path" and other params
-        self.config = config
-        self.retro_model_path = self.config.get(
-            "retro_model_path",
-            RETRO_MODEL_LOCATION_DICT["10clusters"],
-        )
-        self.forward_model_path = self.config.get(
-            "forward_model_path",
-            FORWARD_MODEL_LOCATION_DICT["forwardUSPTO"],
-        )
-        self.classification_model_path = self.config.get(
-            "classification_model_path",
-            CLASSIFICATION_MODEL_LOCATION_DICT["classificationUSPTO"],
-        )
-        self.n_tokens = self.config.get("n_tokens", RETRO_MODEL_TOKENS_DICT["10clusters"])
+        self.retro_model_path = retro_model_path
+        self.forward_model_path = forward_model_path
+        self.classification_model_path = classification_model_path
+        self.n_tokens = n_tokens
+        self.beam_size = beam_size
+        self.max_length = max_length
+        self.batch_size = batch_size
+        self.n_best = n_best
 
         self.tokenizer = tokenize_smiles
 
@@ -88,9 +88,9 @@ class RXNClusterTokenPrompt:
 
         retro_translator = Translator.from_model_path(
             model_path=str(self.retro_model_path),
-            beam_size=self.config.get("beam_size", 10),
-            max_length=self.config.get("max_length", 300),
-            batch_size=self.config.get("batch_size", 64),
+            beam_size=self.beam_size,
+            max_length=self.max_length,
+            batch_size=self.batch_size,
             gpu=-1
         )
 
@@ -98,7 +98,7 @@ class RXNClusterTokenPrompt:
             model_path=str(self.forward_model_path),
             beam_size=10,
             max_length=300,
-            batch_size=self.config.get("batch_size", 64),
+            batch_size=self.batch_size,
             gpu=-1
         )
 
@@ -106,12 +106,12 @@ class RXNClusterTokenPrompt:
             model_path=str(self.classification_model_path),
             beam_size=5,
             max_length=300,
-            batch_size=self.config.get("batch_size", 64),
+            batch_size=self.batch_size,
             gpu=-1
         )
 
         results_iterator = retro_translator.translate_multiple_with_scores(
-            tok_products, n_best=self.config.get("n_best", 10)
+            tok_products, n_best=self.n_best
         )
 
         # Collect results from retrosynthesis, forward and classification models
