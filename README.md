@@ -7,7 +7,9 @@ trained using the [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) framework.
 #### Create Environment and Install
 ```bash
 conda create -n rxn-cluster-token-prompt python=3.6
+conda activate rxn-cluster-token-prompt
 conda install -c rdkit rdkit=2020.03.1 # must be installed manually
+pip install rxnfp
 git clone git@github.ibm.com:ATO/rxn_cluster_token_prompt.git
 cd rxn_cluster_token_prompt/
 pip install -e .
@@ -28,31 +30,14 @@ You can easily try out the rxn cluster token prompt model for high diversity ret
 predictions with 3 lines of code:
 ```python
 from rxn_cluster_token_prompt.model import RXNClusterTokenPrompt
-retro_model = RXNClusterTokenPrompt(config={"n_best": 1})
-retro_model.retro_predict(["CCN(CC)Cc1ccc(-c2nc(C)c(COc3ccc([C@H](CC(=O)N4C(=O)OC[C@@H]4Cc4ccccc4)c4ccon4)cc3)s2)cc1"], reorder_by_forward_likelihood=True, display=True)
+retro_model = RXNClusterTokenPrompt(n_best=1)
+retro_model.retro_predict(["CCN(CC)Cc1ccc(-c2nc(C)c(COc3ccc([C@H](CC(=O)N4C(=O)OC[C@@H]4Cc4ccccc4)c4ccon4)cc3)s2)cc1"], reorder_by_forward_likelihood=True, verbose=True)
 ```
 
 The code above calls the default model (10clusters on USPTO). 
-The `n_best` is the number of predictions per token to retain. 
-Check the next section on how you can use different models!
+The `n_best` is the number of predictions per token to retain.
 
-### Try it out!
-To make predictions with a different model you can change the following options
-to the config:
-```python
-config = {
-    "retro_model_path": "the_path_to_your_retro_model", 
-    "forward_model_path": "the_path_to_your_forward_model", 
-    "classification_model_path": "the_path_to_your_classification_model", 
-    "n_tokens": 10, # the number of cluster tokens your model was trained on
-    "beam_size": 20, # the beam size
-    "max_length": 300 , # the maximum number of tokens in your sample
-    "batch_size": 64, # the batch size for predictions
-    "n_best": 5 # the number of predictions to retain for each token
-}
-```
-
-To make predictions on a bigger dataset we reccomend to use the procedure outlined
+To make predictions on a bigger dataset we recommend to use the procedure outlined
 below (after the USPTO dataset preparation), as the one above is not implemented for gpus.
 
 ### USPTO Datasets generation
