@@ -150,6 +150,5 @@ one gpu.
 
 ### Evaluation
 
-To evaluate your models you can costumize the script `bin/compute_metrics.sh`. The output is a json file called metrics.json
+To evaluate your models you can customize the script `bin/compute_metrics.sh`. The output is a json file called metrics.json
 where the values of accuracy, round-trip accuracy, class-diversity and coverage are reported.
-
