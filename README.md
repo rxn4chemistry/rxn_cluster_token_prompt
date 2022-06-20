@@ -1,4 +1,4 @@
-# Enhancing diversity in language based models for single-stepretrosynthesis
+# Enhancing diversity in language based models for single-step retrosynthesis
 
 Enable diversity in single-step retrosynthesis models. The models were
 trained using the [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) framework.
@@ -152,5 +152,4 @@ one gpu.
 
 To evaluate your models you can costumize the script `bin/compute_metrics.sh`. The output is a json file called metrics.json
 where the values of accuracy, round-trip accuracy, class-diversity and coverage are reported.
-
 
