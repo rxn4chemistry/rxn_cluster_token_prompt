@@ -18,11 +18,21 @@ logging.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=logg
 
 
 @click.command()
-@click.option('--input_csv', '-i', type=str, required=True, help='Path to the input reactions csv.')
-@click.option('--output_csv', '-o', type=str, required=True, help='Path to the output reactions csv.')
+@click.option(
+    '--input_csv', '-i', type=str, required=True, help='Path to the input reactions csv.'
+)
+@click.option(
+    '--output_csv', '-o', type=str, required=True, help='Path to the output reactions csv.'
+)
 @click.option('--clusterer_pkl', '-p', type=str, required=False, help='Path to the clusterer.')
-@click.option('--n_clusters_random', '-n', type=int, required=False, help='Number of random groups for the reaction '
-                                                                          'classes.')
+@click.option(
+    '--n_clusters_random',
+    '-n',
+    type=int,
+    required=False,
+    help='Number of random groups for the reaction '
+    'classes.'
+)
 @click.option(
     '--cluster_column',
     '-m',
@@ -38,15 +48,17 @@ logging.basicConfig(format="[%(asctime)s %(levelname)s] %(message)s", level=logg
     help="Column where the reaction classes are stored, default 'class'."
 )
 def main(
-        input_csv: str, output_csv: str, clusterer_pkl: Optional[str], n_clusters_random: Optional[int],
-        cluster_column: str, class_column: str
+    input_csv: str, output_csv: str, clusterer_pkl: Optional[str],
+    n_clusters_random: Optional[int], cluster_column: str, class_column: str
 ):
     """Get the cluster number and add it as a new column to a CSV."""
     if clusterer_pkl is not None and n_clusters_random is not None:
         raise ValueError("Choose between '--clusterer_pkl' and '--n_clusters_random'.")
     if clusterer_pkl is None and n_clusters_random is None:
-        raise ValueError("Either a pickle file for the clusterer or the number of random groups for the reaction "
-                         "classes must be provided")
+        raise ValueError(
+            "Either a pickle file for the clusterer or the number of random groups for the reaction "
+            "classes must be provided"
+        )
 
     if not is_path_creatable(output_csv):
         raise ValueError(f'Permissions insufficient to create file "{output_csv}".')
@@ -74,16 +86,16 @@ def main(
 
     else:
         if class_column not in df.columns:
-            raise KeyError(
-                f"The column '{class_column}' was not found in the data."
-            )
+            raise KeyError(f"The column '{class_column}' was not found in the data.")
 
         unique_classes = sorted(list(set(df[class_column].values)))
         logger.info(f"Found {len(unique_classes)} unique reaction classes.")
         if len(unique_classes) < n_clusters_random:
-            raise ValueError("Choose a number of clusters smaller that the number of unique reaction classes.")
+            raise ValueError(
+                "Choose a number of clusters smaller that the number of unique reaction classes."
+            )
         elif len(unique_classes) == n_clusters_random:
-            logger.info(f"Number of clusters equals the number of unique classes")
+            logger.info("Number of clusters equals the number of unique classes")
             inverted_clusters_map = {cl: i for i, cl in enumerate(unique_classes)}
             logger.info(f"Random clusters map: {inverted_clusters_map}")
             df[cluster_column] = df[class_column].map(inverted_clusters_map)
@@ -95,7 +107,10 @@ def main(
                 for i in range(n_clusters_random):
                     if len(unique_classes) < 1:
                         break
-                    index = random.randrange(start=0, stop=len(unique_classes), )
+                    index = random.randrange(
+                        start=0,
+                        stop=len(unique_classes),
+                    )
                     removed_element = unique_classes.pop(index)
                     clusters_map[i].append(removed_element)
 

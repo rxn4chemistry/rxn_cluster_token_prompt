@@ -13,9 +13,7 @@ logger.addHandler(logging.NullHandler())
 
 
 @click.command(context_settings={"show_default": True})
-@click.option(
-    "--results_dir", required=True, help="Where the retro predictions are stored"
-)
+@click.option("--results_dir", required=True, help="Where the retro predictions are stored")
 @click.option(
     "--reordered",
     required=False,
@@ -42,9 +40,7 @@ def main(results_dir: str, reordered: bool) -> None:
     metrics_dict = metrics.get_metrics()
     with open(retro_files.metrics_file, "wt") as f:
         json.dump(metrics_dict, f, indent=2)
-    logger.info(
-        f'Computing the retro metrics... Saved to "{retro_files.metrics_file}".'
-    )
+    logger.info(f'Computing the retro metrics... Saved to "{retro_files.metrics_file}".')
 
 
 if __name__ == "__main__":

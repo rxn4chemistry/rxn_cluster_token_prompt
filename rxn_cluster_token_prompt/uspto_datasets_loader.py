@@ -5,10 +5,10 @@ This file contains loaders for synthetic reaction datasets from the US Patent Of
 import logging
 
 import pandas as pd
-from rdkit import Chem
 
 from rxn_cluster_token_prompt.repo_utils import data_directory
 from rxn_cluster_token_prompt.utils import download_url
+from rxn_cluster_token_prompt.onmt_utils.utils import maybe_canonicalize_rxn
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -24,15 +24,6 @@ USPTO_URLS = {
 }
 
 
-def canonicalize_rxn(smiles: str) -> str:
-    precursors, product = smiles.split(">>")
-    try:
-        return f"{Chem.MolToSmiles(Chem.MolFromSmiles(precursors))}>>{Chem.MolToSmiles(Chem.MolFromSmiles(product))}"
-    except:
-        logger.info(f"Cannot canonicalize reaction: {smiles}")
-        return ""
-
-
 class USPTOLoader:
 
     def __init__(self, dataset_name: str):
@@ -44,7 +35,9 @@ class USPTOLoader:
     def download_dataset(self):
         if not (DEFAULT_DIR / f"{self.dataset_name}.csv").exists():
             logger.info("Downloading dataset...")
-            download_url(url=self.dataset_url, dest_dir=DEFAULT_DIR, name=f"{self.dataset_name}.csv")
+            download_url(
+                url=self.dataset_url, dest_dir=DEFAULT_DIR, name=f"{self.dataset_name}.csv"
+            )
             logger.info("Dataset download complete.")
 
     def process_dataset(self, canonicalize: bool = True, single_product: bool = True):
@@ -62,7 +55,9 @@ class USPTOLoader:
             logger.info(f"Number of reactions: {len(df)}")
         if canonicalize:
             logger.info("Removing reactions which are not canonicalizable ...")
-            df[f"{reactions_column_name}_can"] = df[reactions_column_name].apply(lambda x: canonicalize_rxn(x))
+            df[f"{reactions_column_name}_can"] = df[reactions_column_name].apply(
+                lambda x: maybe_canonicalize_rxn(x)
+            )
             df = df.loc[df[f"{reactions_column_name}_can"] != ""]
             logger.info(f"Number of reactions: {len(df)}")
 

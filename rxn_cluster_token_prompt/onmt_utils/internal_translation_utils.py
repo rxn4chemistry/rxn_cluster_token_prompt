@@ -106,9 +106,7 @@ class RawTranslator:
 
         src_shards = split_corpus(opt.src, opt.shard_size)
         tgt_shards = (
-            split_corpus(opt.tgt, opt.shard_size)
-            if opt.tgt is not None
-            else repeat(None)
+            split_corpus(opt.tgt, opt.shard_size) if opt.tgt is not None else repeat(None)
         )
         shard_pairs = zip(src_shards, tgt_shards)
 

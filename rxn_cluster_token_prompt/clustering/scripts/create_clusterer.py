@@ -11,8 +11,15 @@ from rxn_cluster_token_prompt.clustering.data_loading import FP_COLUMN, load_df
 
 @click.command()
 @click.option('--clusterer_pkl', type=str, required=True, help='Where to store the clusterer.')
-@click.option('--pca_components', type=int, default=3, help='The order of dimension reduction, default is 3.')
-@click.option('--n_clusters', type=int, default=10, help='The number of clusters to use, default is 10.')
+@click.option(
+    '--pca_components',
+    type=int,
+    default=3,
+    help='The order of dimension reduction, default is 3.'
+)
+@click.option(
+    '--n_clusters', type=int, default=10, help='The number of clusters to use, default is 10.'
+)
 def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
     """Create a clusterer based on some reaction data.
 

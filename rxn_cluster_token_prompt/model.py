@@ -21,10 +21,7 @@ RETRO_MODEL_LOCATION_DICT = {
     "10clustersKmeans": models_directory() / "10clustersKmeans" / "10clustersKmeans.pt",
 }
 
-RETRO_MODEL_TOKENS_DICT = {
-    "10clusters": 10,
-    "10clustersKmeans": 10
-}
+RETRO_MODEL_TOKENS_DICT = {"10clusters": 10, "10clustersKmeans": 10}
 
 FORWARD_MODEL_LOCATION_DICT = {
     "forwardUSPTO": models_directory() / "forwardUSPTO" / "forwardUSPTO.pt"
@@ -40,15 +37,15 @@ class RXNClusterTokenPrompt:
     """
 
     def __init__(
-            self,
-            retro_model_path: str = RETRO_MODEL_LOCATION_DICT["10clusters"],
-            forward_model_path: str = FORWARD_MODEL_LOCATION_DICT["forwardUSPTO"],
-            classification_model_path: str = CLASSIFICATION_MODEL_LOCATION_DICT["classificationUSPTO"],
-            n_tokens: int = RETRO_MODEL_TOKENS_DICT["10clusters"],
-            beam_size: int = 10,
-            max_length: int = 300,
-            batch_size: int = 64,
-            n_best: int = 2
+        self,
+        retro_model_path: str = RETRO_MODEL_LOCATION_DICT["10clusters"],
+        forward_model_path: str = FORWARD_MODEL_LOCATION_DICT["forwardUSPTO"],
+        classification_model_path: str = CLASSIFICATION_MODEL_LOCATION_DICT["classificationUSPTO"],
+        n_tokens: int = RETRO_MODEL_TOKENS_DICT["10clusters"],
+        beam_size: int = 10,
+        max_length: int = 300,
+        batch_size: int = 64,
+        n_best: int = 2
     ):
         """
         RXNMapper constructor.
@@ -68,9 +65,16 @@ class RXNClusterTokenPrompt:
 
         self.tokenizer = tokenize_smiles
 
-    def retro_predict(self, products: List[str], canonicalize_input=True, canonicalize_output=True,
-                      remove_invalid_retro_predictions=True, probabilities=True, reorder_by_forward_likelihood=False,
-                      display=False) -> Dict[str, List[tuple]]:
+    def retro_predict(
+        self,
+        products: List[str],
+        canonicalize_input=True,
+        canonicalize_output=True,
+        remove_invalid_retro_predictions=True,
+        probabilities=True,
+        reorder_by_forward_likelihood=False,
+        display=False
+    ) -> Dict[str, List[tuple]]:
         if len(products) > 64:
             logger.info("Requesting translation on many products ...might be slow")
         if canonicalize_input:
@@ -79,8 +83,7 @@ class RXNClusterTokenPrompt:
         # Prompt preparation
         class_token_products = (
             f"{convert_class_token_idx_for_translation_models(class_token_idx)}{molecule}"
-            for molecule in products
-            for class_token_idx in range(self.n_tokens)
+            for molecule in products for class_token_idx in range(self.n_tokens)
         )
 
         # Tokenization
@@ -136,16 +139,22 @@ class RXNClusterTokenPrompt:
                 enriched_predictions = []
                 for prediction, confidence in predictions:
                     forward_output = forward_translator.translate_single_with_score(
-                        tokenize_smiles(prediction))
+                        tokenize_smiles(prediction)
+                    )
                     round_trip_prediction, round_trip_confidence = \
                         maybe_canonicalize(detokenize_smiles(forward_output.text)), \
                         compute_probabilities(forward_output.score) if probabilities else forward_output.score
                     predicted_rxn = create_rxn(prediction, product)
                     classification_output = classification_translator.translate_single_with_score(
-                        tokenize_smiles(predicted_rxn))
+                        tokenize_smiles(predicted_rxn)
+                    )
                     classification_prediction = classification_output.text
-                    enriched_predictions.append((prediction, confidence, round_trip_prediction, round_trip_confidence,
-                                                 classification_prediction))
+                    enriched_predictions.append(
+                        (
+                            prediction, confidence, round_trip_prediction, round_trip_confidence,
+                            classification_prediction
+                        )
+                    )
                 return enriched_predictions
 
             output[product] = _forward_and_classification_prediction(_remove_invalids(res[i: i + multiplier])) \
@@ -164,10 +173,11 @@ class RXNClusterTokenPrompt:
         (target, predicted_precursors, retro_confidence, predicted_product, forward_confidence, predicted_class)
         """
         print(
-            {"predicted precursors": prediction[0],
-             "retro confidence": prediction[1],
-             "predicted product": prediction[2],
-             "forward confidence": prediction[3],
-             "predicted class": prediction[4]
-             }
+            {
+                "predicted precursors": prediction[0],
+                "retro confidence": prediction[1],
+                "predicted product": prediction[2],
+                "forward confidence": prediction[3],
+                "predicted class": prediction[4]
+            }
         )

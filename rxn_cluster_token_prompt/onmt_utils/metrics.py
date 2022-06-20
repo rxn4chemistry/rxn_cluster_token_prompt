@@ -6,9 +6,7 @@ from rxn.utilities.containers import chunker
 T = TypeVar("T")
 
 
-def top_n_accuracy(
-    ground_truth: Sequence[T], predictions: Sequence[T]
-) -> Dict[int, float]:
+def top_n_accuracy(ground_truth: Sequence[T], predictions: Sequence[T]) -> Dict[int, float]:
     """
     Compute the top-n accuracy values.
     Raises:
@@ -26,15 +24,14 @@ def top_n_accuracy(
 
     for gt, predictions in zip(ground_truth, prediction_chunks):
         for i in range(multiplier):
-            correct = gt in predictions[: i + 1]
+            correct = gt in predictions[:i + 1]
             correct_for_topn[i] += int(correct)
 
     return {i + 1: correct_for_topn[i] / len(ground_truth) for i in range(multiplier)}
 
 
-def round_trip_accuracy(
-    ground_truth: Sequence[T], predictions: Sequence[T]
-) -> Tuple[Dict[int, float], Dict[int, float]]:
+def round_trip_accuracy(ground_truth: Sequence[T],
+                        predictions: Sequence[T]) -> Tuple[Dict[int, float], Dict[int, float]]:
     """
     Compute the round-trip accuracy values, split by n-th predictions.
     Raises:
@@ -109,18 +106,14 @@ def class_diversity(
     multiplier = get_multiplier(ground_truth=ground_truth, predictions=predictions)
 
     # we will count how many unique superclasses are present
-    predicted_superclasses = [
-        long_class.split(".")[0] for long_class in predicted_classes
-    ]
+    predicted_superclasses = [long_class.split(".")[0] for long_class in predicted_classes]
 
     # we will get, for each prediction of each "n", how many predictions among the "n" are correct
     classes_for_n: List[List[int]] = [[] for _ in range(multiplier)]
 
     # We will process sample by sample - for that, we need to chunk the predictions and the classes
     predictions_and_classes = zip(predictions, predicted_superclasses)
-    prediction_and_classes_chunks = chunker(
-        predictions_and_classes, chunk_size=multiplier
-    )
+    prediction_and_classes_chunks = chunker(predictions_and_classes, chunk_size=multiplier)
 
     for gt, preds_and_classes in zip(ground_truth, prediction_and_classes_chunks):
         classes = set()

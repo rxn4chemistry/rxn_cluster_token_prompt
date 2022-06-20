@@ -4,9 +4,7 @@ from urllib.request import urlretrieve
 from pathlib import Path
 
 
-def download_url(url: str,
-                 dest_dir: Path,
-                 name: Optional[str] = None):
+def download_url(url: str, dest_dir: Path, name: Optional[str] = None):
     """Download a file to disk.
     Parameters
     ----------

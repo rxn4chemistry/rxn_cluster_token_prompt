@@ -54,7 +54,9 @@ class Translator:
         return [t[0] for t in translations]
 
     def translate_multiple_with_scores(
-        self, sentences: Iterable[str], n_best: Optional[int] = None
+        self,
+        sentences: Iterable[str],
+        n_best: Optional[int] = None
     ) -> Iterator[List[TranslationResult]]:
         """
         Translate multiple sentences.
@@ -73,9 +75,7 @@ class Translator:
         return translations
 
     @classmethod
-    def from_model_path(
-        cls, model_path: Union[str, Iterable[str]], **kwargs: Any
-    ) -> "Translator":
+    def from_model_path(cls, model_path: Union[str, Iterable[str]], **kwargs: Any) -> "Translator":
         """
         Create a Translator instance from the model path(s).
         Args:

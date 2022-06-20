@@ -37,9 +37,7 @@ class RetroMetrics:
         roundtrip, roundtrip_std = round_trip_accuracy(
             ground_truth=self.gt_products, predictions=self.predicted_products
         )
-        cov = coverage(
-            ground_truth=self.gt_products, predictions=self.predicted_products
-        )
+        cov = coverage(ground_truth=self.gt_products, predictions=self.predicted_products)
         if self.predicted_classes:
             classdiversity, classdiversity_std = class_diversity(
                 ground_truth=self.gt_products,
@@ -59,26 +57,18 @@ class RetroMetrics:
         }
 
     @classmethod
-    def from_retro_files(
-        cls, retro_files: RetroFiles, reordered: bool = False
-    ) -> "RetroMetrics":
+    def from_retro_files(cls, retro_files: RetroFiles, reordered: bool = False) -> "RetroMetrics":
         return cls.from_raw_files(
             gt_precursors_file=retro_files.gt_precursors,
             gt_products_file=retro_files.gt_products,
             predicted_precursors_file=retro_files.predicted_precursors_canonical
-            if not reordered
-            else str(retro_files.predicted_precursors_canonical)
-            + RetroFiles.REORDERED_FILE_EXTENSION,
-            predicted_products_file=retro_files.predicted_products_canonical
-            if not reordered
-            else str(retro_files.predicted_products_canonical)
-            + RetroFiles.REORDERED_FILE_EXTENSION,
-            predicted_classes_file=None
-            if not os.path.exists(retro_files.predicted_classes)
-            else retro_files.predicted_classes
-            if not reordered
-            else str(retro_files.predicted_classes)
-            + RetroFiles.REORDERED_FILE_EXTENSION,
+            if not reordered else str(retro_files.predicted_precursors_canonical) +
+            RetroFiles.REORDERED_FILE_EXTENSION,
+            predicted_products_file=retro_files.predicted_products_canonical if not reordered else
+            str(retro_files.predicted_products_canonical) + RetroFiles.REORDERED_FILE_EXTENSION,
+            predicted_classes_file=None if not os.path.exists(retro_files.predicted_classes) else
+            retro_files.predicted_classes if not reordered else
+            str(retro_files.predicted_classes) + RetroFiles.REORDERED_FILE_EXTENSION,
         )
 
     @classmethod
@@ -96,6 +86,5 @@ class RetroMetrics:
             predicted_precursors=iterate_lines_from_file(predicted_precursors_file),
             predicted_products=iterate_lines_from_file(predicted_products_file),
             predicted_classes=None
-            if predicted_classes_file is None
-            else iterate_lines_from_file(predicted_classes_file),
+            if predicted_classes_file is None else iterate_lines_from_file(predicted_classes_file),
         )

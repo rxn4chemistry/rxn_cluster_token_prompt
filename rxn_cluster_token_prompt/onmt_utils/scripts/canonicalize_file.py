@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 
-def canonicalize_line(
-    smiles_line: str, invalid_placeholder: str, sort_molecules: bool
-) -> str:
+def canonicalize_line(smiles_line: str, invalid_placeholder: str, sort_molecules: bool) -> str:
     try:
         if ">" in smiles_line:
             # we have a reaction SMILES

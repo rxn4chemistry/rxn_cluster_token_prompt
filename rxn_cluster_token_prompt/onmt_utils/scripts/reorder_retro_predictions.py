@@ -41,9 +41,7 @@ def reorder_retro_predictions_class_token(
             -> sorted([top2 prediction('[i] x') for i in number_class_tokens])
             ...
     """
-    logger.info(
-        f'Reordering file "{predictions_file}", based on {n_class_tokens} class tokens.'
-    )
+    logger.info(f'Reordering file "{predictions_file}", based on {n_class_tokens} class tokens.')
 
     # We load the files and chunk the confidences
     ground_truth = load_list_from_file(ground_truth_file)
@@ -77,12 +75,9 @@ def reorder_retro_predictions_class_token(
             # For each class token take the topn prediction and reorder them based on the
             # (negative) confidence (index x[1])
             topn_per_class_token = [
-                chunk[topn]
-                for chunk in chunker(pred_and_conf, chunk_size=topx_per_class_token)
+                chunk[topn] for chunk in chunker(pred_and_conf, chunk_size=topx_per_class_token)
             ]
-            reordered = sorted(
-                topn_per_class_token, key=lambda x: float(x[1]), reverse=True
-            )
+            reordered = sorted(topn_per_class_token, key=lambda x: float(x[1]), reverse=True)
             predictions_and_confidences_reordered.extend(reordered)
 
     dump_list_to_file(
@@ -98,24 +93,15 @@ def reorder_retro_predictions_class_token(
         str(fwd_predictions_file) + RetroFiles.REORDERED_FILE_EXTENSION,
     )
     dump_list_to_file(
-        (
-            classes_pred
-            for _, _, _, classes_pred in predictions_and_confidences_reordered
-        ),
+        (classes_pred for _, _, _, classes_pred in predictions_and_confidences_reordered),
         str(classes_predictions_file) + RetroFiles.REORDERED_FILE_EXTENSION,
     )
 
 
 @click.command()
-@click.option(
-    "--ground_truth_file", "-g", required=True, help="File with ground truth."
-)
-@click.option(
-    "--predictions_file", "-p", required=True, help="File with the predictions."
-)
-@click.option(
-    "--confidences_file", "-l", required=True, help="File with the confidences."
-)
+@click.option("--ground_truth_file", "-g", required=True, help="File with ground truth.")
+@click.option("--predictions_file", "-p", required=True, help="File with the predictions.")
+@click.option("--confidences_file", "-l", required=True, help="File with the confidences.")
 @click.option(
     "--fwd_predictions_file",
     "-f",
@@ -128,9 +114,7 @@ def reorder_retro_predictions_class_token(
     required=True,
     help="File with the classes predictions.",
 )
-@click.option(
-    "--n_class_tokens", "-n", required=True, type=int, help="Number of class tokens."
-)
+@click.option("--n_class_tokens", "-n", required=True, type=int, help="Number of class tokens.")
 def main(
     ground_truth_file: str,
     predictions_file: str,
