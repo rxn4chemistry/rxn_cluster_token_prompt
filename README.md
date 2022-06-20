@@ -16,12 +16,6 @@ For development
 ```bash
 pip install -e .[dev]
 ```
-Install reaction fingerprint in a different folder (this is used to create the tokens based on clustering reaction fingerprints)
-```bash
-git clone git@github.com:rxn4chemistry/rxnfp.git
-cd rxnfp/
-pip install -e .
-```
 When developing, before committing please run
 ```bash
 yapf -ipr .
@@ -99,7 +93,6 @@ As an example, to generate the clusterer for the `10clustersKmeans` model:
 First, set the following environment variables (examples are given as comments):
 ```bash
 export FPS_SAVE_PATH=The absolute filepath where to store the computed fingerprints # path_to_this_repo/data/uspto/USPTO_50K_processed_fingerprints.pkl
-export FPS_MODEL_PATH=The absolute path to the trained fingerprints model # in the rxnfp repo under `rxnfp/models/transformers/bert_ft`
 export DATA_CSV_PATH=The absolute path to the data on which to compute the fingerprints # path_to_this_repo/data/uspto/USPTO_50K_processed.csv
 export RXN_SMILES_COLUMN=The column name where the reactions are stored # reactions_can
 ```

@@ -72,9 +72,7 @@ class Clusterer:
                 )
             )
 
-        fps_list = generate_fps(
-            model=model_path, reaction_smiles=rxn_smiles_iterator, verbose=False
-        )
+        fps_list = generate_fps(reaction_smiles=rxn_smiles_iterator, verbose=False)
 
         logger.info('Obtained the fingerprints; getting clusters now.')
         fps = np.array(fps_list)

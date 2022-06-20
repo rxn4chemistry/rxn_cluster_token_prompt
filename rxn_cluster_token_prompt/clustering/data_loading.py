@@ -18,7 +18,6 @@ def ensure_fp(df: pd.DataFrame, saved_fp_path: Path) -> None:
     if not saved_fp_path.exists():
         logger.info("Fingerprints not available. Computing them ...")
         fps = generate_fps(
-            model=os.environ['FPS_MODEL_PATH'],
             reaction_smiles=df[os.environ['RXN_SMILES_COLUMN']].tolist(),
             verbose=True
         )
