@@ -40,8 +40,8 @@ onmt_train -data ${PREPROCESSDIR}/preprocessed_rxn_cluster_token_prompt \
 
 
 # DATA LOCATION
-PRODUCTS_FILE="${PWD}/data/test_data/product-valid.txt"
-PRECURSORS_FILE="${PWD}/data/test_data/precursors-valid.txt"
+PRODUCTS_FILE="${PWD}/data/test_data/product-test.txt"
+PRECURSORS_FILE="${PWD}/data/test_data/precursors-test.txt"
 OUTPUT_DIR="${PWD}/data/test_data/results"
 RETRO_MODEL_FILE="${PWD}/models/10clusters/10clusters.pt"
 FORWARD_MODEL_FILE="${PWD}/models/forwardUSPTO/forwardUSPTO.pt"

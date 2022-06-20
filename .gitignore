@@ -8,4 +8,4 @@ data/uspto/USPTO_50K_processed_10clustersKmeans.csv
 data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
 data/uspto/USPTO_50K_processed_10clustersRandom.csv
 data/uspto/USPTO_50K_processed_fingerprints.pkl
-
+models

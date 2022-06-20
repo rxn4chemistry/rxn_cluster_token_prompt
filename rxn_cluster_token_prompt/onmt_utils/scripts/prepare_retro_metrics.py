@@ -87,7 +87,7 @@ def main(
     output_dir: str,
     retro_model: str,
     forward_model: str,
-    classification_model: str,
+    classification_model: Optional[str],
     batch_size: int,
     n_best: int,
     gpu: bool,
@@ -109,7 +109,7 @@ def main(
 
     setup_console_and_file_logger(retro_files.log_file)
 
-    if class_tokens:
+    if class_tokens is not None:
         class_token_products = (
             f"{convert_class_token_idx_for_translation_models(class_token_idx)}{detokenize_smiles(line)}"
             for line in iterate_lines_from_file(products_file)
