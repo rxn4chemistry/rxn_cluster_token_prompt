@@ -63,11 +63,12 @@ Results are saved in `path_to_this_repo/data/uspto`.
 
 Then, you can generate the files for training and inference with the command:
 ```bash
-generate-dataset-files --input_csv_file ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv
-                       --output_path ${DATASET_OUTPUT}
-                       --rxn-column-name reactions_can
-                       --cluster-column-name class 
-                       --model-type retro
+generate-dataset-files \
+  --input_csv_file ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv \
+  --output_path ${DATASET_OUTPUT} \
+  --rxn-column-name reactions_can \
+  --cluster-column-name class \
+  --model-type retro
 ```
 For options on how to use the command run `generate-dataset-files --help`.
 The model-type can be either `retro`,`forward`,`classification`
