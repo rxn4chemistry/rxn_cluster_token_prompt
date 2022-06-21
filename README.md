@@ -87,9 +87,9 @@ As an example, to generate the clusterer for the `10clustersKmeans` model:
 
 First, set the following environment variables (examples are given as comments):
 ```bash
-export FPS_SAVE_PATH=The absolute filepath where to store the computed fingerprints # ${REPO_PATH}/data/uspto/USPTO_50K_processed_fingerprints.pkl
-export DATA_CSV_PATH=The absolute path to the data on which to compute the fingerprints # ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv
-export RXN_SMILES_COLUMN=The column name where the reactions are stored # reactions_can
+export FPS_SAVE_PATH="${REPO_PATH}/data/uspto/USPTO_50K_processed_fingerprints.pkl" # The absolute filepath where to store the computed fingerprints
+export DATA_CSV_PATH="${REPO_PATH}/data/uspto/USPTO_50K_processed.csv" # The absolute path to the data on which to compute the fingerprints 
+export RXN_SMILES_COLUMN="reactions_can" # The column name where the reactions are stored # 
 ```
 Then, run the script:
 ```bash
