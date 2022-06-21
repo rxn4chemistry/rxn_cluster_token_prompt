@@ -37,10 +37,10 @@ def main(clusterer_pkl: str, pca_components: int, n_clusters: int):
     # Load Data
     df = load_df()
     fps = np.array(df[selected_fp_column].tolist())
-    logger.info('Loaded fingerprints to train clustering algorithm:', len(fps))
+    logger.info(f'Loaded fingerprints to train clustering algorithm: {len(fps)}')
 
     all_fps = fps
-    logger.info('Merged, shuffled:', len(all_fps))
+    logger.info(f'Merged, shuffled: {len(all_fps)}')
 
     pca = PCA(n_components=pca_components)
     kmeans = KMeans(n_clusters=n_clusters)
