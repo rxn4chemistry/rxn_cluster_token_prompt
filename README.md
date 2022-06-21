@@ -88,9 +88,10 @@ export RXN_SMILES_COLUMN=The column name where the reactions are stored # reacti
 ```
 Then, run the script:
 ```bash
-create-clusterer --clusterer_pkl path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
-                 --pca_components 3 
-                 --n_clusters 10
+create-clusterer \
+  --clusterer_pkl path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl \
+  --pca_components 3 \
+  --n_clusters 10
 ```
 
 You can tune the number of pca components and the number of clusters to
