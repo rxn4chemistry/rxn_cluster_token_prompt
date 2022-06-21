@@ -103,9 +103,10 @@ for the training/validation/test reactions. This will be added as an additional 
 to the input csv file.
 
 ```bash
-cluster-csv --input_csv path_to_this_repo/data/uspto/USPTO_50K_processed.csv
-            --output_csv path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans.csv
-            --clusterer_pkl path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
+cluster-csv \
+  --input_csv path_to_this_repo/data/uspto/USPTO_50K_processed.csv \
+  --output_csv path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
+  --clusterer_pkl path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
 ```
 If you want, alternatively to fingerprints clustering, to generate random grouping of the reaction classes 
 you can pass the option `--n_clusters_random` defining
