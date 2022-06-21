@@ -28,7 +28,12 @@ yapf -ipr .
 mypy .
 flake8
 ```
-
+To simplify the scripts run, export the path to this repo
+and the path where to store the dataset files
+```bash
+export REPO_PATH=/path/to/the/repository
+export DATASET_OUTPUT=/your/output/directory
+```
 ### Try it out!
 You can easily try out the rxn cluster token prompt model for high diversity retrosynthesis
 predictions with 3 lines of code:
@@ -58,8 +63,8 @@ Results are saved in `path_to_this_repo/data/uspto`.
 
 Then, you can generate the files for training and inference with the command:
 ```bash
-generate-dataset-files --input_csv_file path_to_this_repo/data/uspto/USPTO_50K_processed.csv
-                       --output_path your_output_path
+generate-dataset-files --input_csv_file ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv
+                       --output_path ${DATASET_OUTPUT}
                        --rxn-column-name reactions_can
                        --cluster-column-name class 
                        --model-type retro
@@ -88,7 +93,7 @@ export RXN_SMILES_COLUMN=The column name where the reactions are stored # reacti
 Then, run the script:
 ```bash
 create-clusterer \
-  --clusterer_pkl path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl \
+  --clusterer_pkl ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl \
   --pca_components 3 \
   --n_clusters 10
 ```
@@ -103,9 +108,9 @@ to the input csv file.
 
 ```bash
 cluster-csv \
-  --input_csv path_to_this_repo/data/uspto/USPTO_50K_processed.csv \
-  --output_csv path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
-  --clusterer_pkl path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
+  --input_csv ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv \
+  --output_csv ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
+  --clusterer_pkl ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
 ```
 If you want, alternatively to fingerprints clustering, to generate random grouping of the reaction classes 
 you can pass the option `--n_clusters_random` defining
@@ -115,13 +120,13 @@ Run `cluster-csv --help` for more information.
 You can now generate the files with:
 ```bash
 generate-dataset-files \
-  --input_csv_file path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
-  --output_path your_output_dir \
+  --input_csv_file ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
+  --output_path ${DATASET_OUTPUT} \
   --rxn-column-name reactions_can \
   --cluster-column-name cluster_id \
   --model-type retro
 ```
-The files will be saved under `your_output_dir/random5`, where 5 is the random seed used to 
+The files will be saved under `${DATASET_OUTPUT}/random5`, where 5 is the random seed used to 
 generate the splits. You can change the seed with the `--seed` option.
 
 ### Training

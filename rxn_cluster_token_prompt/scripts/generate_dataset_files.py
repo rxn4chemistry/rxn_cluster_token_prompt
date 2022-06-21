@@ -33,7 +33,7 @@ def tokenize_smiles_list(smiles_list: List[str]) -> List[str]:
     help="Path to the csv file containing the reaction smiles and optionally the reaction class information."
 )
 @click.option(
-    '--output_path', '-o', type=click.Path(exists=True), required=True, help="Output path"
+    '--output_path', '-o', type=str, required=True, help="Output path"
 )
 @click.option(
     '--model-type',
