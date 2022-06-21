@@ -1,68 +1,144 @@
-# rxn_class_token
+# Enhancing diversity in language based models for single-step retrosynthesis
 
-Repository to prepare and analyze data for the class token 
+Enable diversity in single-step retrosynthesis models. The models were
+trained using the [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) framework.
 
-## Install / Build
-### Create Environment and Install
+### Install / Build
+#### Create Environment and Install
 ```bash
-conda create -n rxn-class-token python=3.6
-conda install -c rdkit rdkit=2020.03.1 # must be installed manually
+# Create environmentt
+conda create -n rxn-cluster-token-prompt python=3.7
+conda activate rxn-cluster-token-prompt
+
+# Add required initial packages (rxnfp may require Rust to be installed)
+pip install rdkit rxnfp
+
+# Clone the repository
+git clone git@github.ibm.com:ATO/rxn_cluster_token_prompt.git
+cd rxn_cluster_token_prompt/
 pip install -e .
 ```
 For development
 ```bash
 pip install -e .[dev]
 ```
-Before committing, please run
+When developing, before committing please run
 ```bash
 yapf -ipr .
 mypy .
 flake8
 ```
-## Datasets generation
-The data for pistachio is stored in the ibm box folder. 
-Click [here](https://ibm.box.com/s/228otc58sl19evweosamxgyjf66cv025) to access the files
-### Generate one or more random splits
-The random splits can be generated with the following script.
+To simplify the scripts run, export the path to this repo
+and the path where to store the dataset files
 ```bash
-generate_multiple_splits input_csv_file output_path --seed 10 --seed 42 --split_ratio 0.1
+export REPO_PATH=/path/to/the/repository
+export DATASET_OUTPUT=/your/output/directory
 ```
-The files are saved in folders like `random10` and `random42` under `output_path`.
-### Baseline model
-The baseline model does not use any class token. To generate it call the following script:
-```bash
-generate_dataset input_file_train_csv output_path_baseline --output-type train --no-class-token
-generate_dataset input_file_test_csv output_path_baseline --output-type test --no-class-token
-generate_dataset input_file_valid_csv output_path_baseline --output-type valid --no-class-token
+### Try it out!
+You can easily try out the rxn cluster token prompt model for high diversity retrosynthesis
+predictions with 3 lines of code:
+```python
+from rxn_cluster_token_prompt.model import RXNClusterTokenPrompt
+retro_model = RXNClusterTokenPrompt(n_best=1)
+retro_model.retro_predict(["CCN(CC)Cc1ccc(-c2nc(C)c(COc3ccc([C@H](CC(=O)N4C(=O)OC[C@@H]4Cc4ccccc4)c4ccon4)cc3)s2)cc1"], reorder_by_forward_likelihood=True, verbose=True)
 ```
-### 12tokens model
-The data for the 12tokens model can be generated with the following:
-```bash
-generate_dataset input_file_train_csv output_path_12tokens --output-type train
-generate_dataset input_file_test_csv output_path_12tokens --output-type test
-generate_dataset input_file_valid_csv output_path_12tokens --output-type valid
-```
-### group1 model
-The data for the group1 model can be generated with the following:
-```bash
-generate_dataset input_file_train_csv output_path_group1 --output-type train --map-file path_to_this_repo/maps/group1.json
 
-generate_dataset input_file_test_csv output_path_group1 --output-type test --map-file path_to_this_repo/maps/group1.json
+The code above calls the default model (10clusters on USPTO). 
+The `n_best` is the number of predictions per token to retain.
 
-generate_dataset input_file_valid_csv output_path_group1 --output-type valid --map-file path_to_this_repo/maps/group1.json
+To make predictions on a bigger dataset we recommend to use the procedure outlined
+below (after the USPTO dataset preparation), as the one above is not implemented for gpus.
 
+### USPTO Datasets generation
+To generate the files for training the high diversity models
+as well as a forward and a classification model for the analysis, 
+first download the dataset and preprocess it:
+```python
+from rxn_cluster_token_prompt.uspto_datasets_loader import USPTOLoader
+loader = USPTOLoader('USPTO_50K')
+loader.download_dataset()
+loader.process_dataset()
 ```
-For costum mapping of the reaction classes, a json similar to the `group1.json` can be provided
+Results are saved in `path_to_this_repo/data/uspto`.
 
-### Preparing a new dataset for predictions
-If predictions need to be launched on a new dataset, to prepare the dataset the following script can be used.
-For the 12tokens model
+Then, you can generate the files for training and inference with the command:
 ```bash
-generate_prediction_dataset input_file_precursors_txt --precursors
-generate_prediction_dataset input_file_product_txt --product
+generate-dataset-files --input_csv_file ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv
+                       --output_path ${DATASET_OUTPUT}
+                       --rxn-column-name reactions_can
+                       --cluster-column-name class 
+                       --model-type retro
 ```
-For the group1 model
+For options on how to use the command run `generate-dataset-files --help`.
+The model-type can be either `retro`,`forward`,`classification`
+
+By specifying the `--cluster-colum-name` you can choose how to build your cluster token prompt model.
+The column `class` in USPTO contains the reaction classes. To see how to choose
+a different clustering technique, check the next section.
+
+When the flag `--baseline` is passed together with the `retro` model type, the data
+for the baseline retrosynthesis model is generated.
+
+### Construction of the clusterers
+In order to apply a clustering technique different from the reaction classification
+provided by [Schneider et al](https://doi.org/10.1021/acs.jcim.6b00564), you can use the following script.
+As an example, to generate the clusterer for the `10clustersKmeans` model:
+
+First, set the following environment variables (examples are given as comments):
 ```bash
-generate_prediction_dataset input_file_precursors_txt --precursors --map-file path_to_this_repo/maps/group1.json
-generate_prediction_dataset input_file_product_txt --product --map-file path_to_this_repo/maps/group1.json
+export FPS_SAVE_PATH=The absolute filepath where to store the computed fingerprints # path_to_this_repo/data/uspto/USPTO_50K_processed_fingerprints.pkl
+export DATA_CSV_PATH=The absolute path to the data on which to compute the fingerprints # path_to_this_repo/data/uspto/USPTO_50K_processed.csv
+export RXN_SMILES_COLUMN=The column name where the reactions are stored # reactions_can
 ```
+Then, run the script:
+```bash
+create-clusterer \
+  --clusterer_pkl ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl \
+  --pca_components 3 \
+  --n_clusters 10
+```
+
+You can tune the number of pca components and the number of clusters to
+generate your clusterer.
+
+### Prediction of the cluster id
+Once the clusterer is generated, you are ready to compute the cluster ids
+for the training/validation/test reactions. This will be added as an additional column
+to the input csv file.
+
+```bash
+cluster-csv \
+  --input_csv ${REPO_PATH}/data/uspto/USPTO_50K_processed.csv \
+  --output_csv ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
+  --clusterer_pkl ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans_clusterer.pkl
+```
+If you want, alternatively to fingerprints clustering, to generate random grouping of the reaction classes 
+you can pass the option `--n_clusters_random` defining
+the number of wanted clusters.
+Run `cluster-csv --help` for more information.
+
+You can now generate the files with:
+```bash
+generate-dataset-files \
+  --input_csv_file ${REPO_PATH}/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
+  --output_path ${DATASET_OUTPUT} \
+  --rxn-column-name reactions_can \
+  --cluster-column-name cluster_id \
+  --model-type retro
+```
+The files will be saved under `${DATASET_OUTPUT}/random5`, where 5 is the random seed used to 
+generate the splits. You can change the seed with the `--seed` option.
+
+### Training
+To train the models you can costumize the script `bin/training.sh` and run it on a system with 
+one gpu. The USPTO models were trained up to 130000 steps (roughly 24 hours).
+
+### Prediction
+
+Once your models are trained you can run the predictions with the custumizable script `bin/translate.sh` on a system with 
+one gpu.
+
+### Evaluation
+
+To evaluate your models you can customize the script `bin/compute_metrics.sh`. The output is a json file called metrics.json
+where the values of accuracy, round-trip accuracy, class-diversity and coverage are reported.
