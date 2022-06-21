@@ -13,8 +13,7 @@ conda activate rxn-cluster-token-prompt
 # Add required initial packages (rxnfp may require Rust to be installed)
 pip install rdkit rxnfp
 
-# Clone the repository
-git clone git@github.ibm.com:ATO/rxn_cluster_token_prompt.git
+# Clone or download the repository (not shown), `cd` into it, and install it as a Python package
 cd rxn_cluster_token_prompt/
 pip install -e .
 ```
