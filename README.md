@@ -7,12 +7,11 @@ trained using the [OpenNMT-py](https://github.com/OpenNMT/OpenNMT-py) framework.
 #### Create Environment and Install
 ```bash
 # Create environmentt
-conda create -n rxn-cluster-token-prompt python=3.6
+conda create -n rxn-cluster-token-prompt python=3.7
 conda activate rxn-cluster-token-prompt
 
 # Add required initial packages (rxnfp may require Rust to be installed)
-conda install -c rdkit rdkit=2020.03.1 # must be installed manually
-pip install rxnfp
+pip install rdkit rxnfp
 
 # Clone the repository
 git clone git@github.ibm.com:ATO/rxn_cluster_token_prompt.git
