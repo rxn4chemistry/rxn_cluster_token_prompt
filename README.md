@@ -115,11 +115,12 @@ Run `cluster-csv --help` for more information.
 
 You can now generate the files with:
 ```bash
-generate-dataset-files --input_csv_file path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans.csv
-                       --output_path your_output_dir 
-                       --rxn-column-name reactions_can
-                       --cluster-column-name cluster_id 
-                       --model-type retro
+generate-dataset-files \
+  --input_csv_file path_to_this_repo/data/uspto/USPTO_50K_processed_10clustersKmeans.csv \
+  --output_path your_output_dir \
+  --rxn-column-name reactions_can \
+  --cluster-column-name cluster_id \
+  --model-type retro
 ```
 The files will be saved under `your_output_dir/random5`, where 5 is the random seed used to 
 generate the splits. You can change the seed with the `--seed` option.
