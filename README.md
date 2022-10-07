@@ -53,6 +53,8 @@ retro_model.retro_predict(["CCN(CC)Cc1ccc(-c2nc(C)c(COc3ccc([C@H](CC(=O)N4C(=O)O
 The code above calls the default model (10clusters on USPTO). 
 The `n_best` is the number of predictions per token to retain.
 
+The output is a list of tuples, each containing (target, predicted_precursors, retro_confidence, predicted_product, forward_confidence, predicted_class)
+
 To make predictions on a bigger dataset we recommend to use the procedure outlined
 below (after the USPTO dataset preparation), as the one above is not implemented for gpus.
 
