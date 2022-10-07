@@ -123,7 +123,10 @@ def main(
                 for i in range(n_clusters_random):
                     if len(unique_classes) < 1:
                         break
-                    index = random.randrange(start=0, stop=len(unique_classes),)
+                    index = random.randrange(
+                        start=0,
+                        stop=len(unique_classes),
+                    )
                     removed_element = unique_classes.pop(index)
                     clusters_map[i].append(removed_element)
 

@@ -23,6 +23,8 @@ pip install -e .[dev]
 ```
 When developing, before committing please run
 ```bash
+black .
+isort --profile black .
 yapf -ipr .
 mypy .
 flake8
@@ -33,6 +35,12 @@ and the path where to store the dataset files
 export REPO_PATH=/path/to/the/repository
 export DATASET_OUTPUT=/your/output/directory
 ```
+To use the open-source models download them in $REPO_PATH following this [link](https://doi.org/10.6084/m9.figshare.20121944.v1) and unzip them with:
+```bash
+tar xvf models.tgz
+```
+This will place the models in a folder called `models`, under $REPO_PATH.
+
 ### Try it out!
 You can easily try out the rxn cluster token prompt model for high diversity retrosynthesis
 predictions with 3 lines of code:

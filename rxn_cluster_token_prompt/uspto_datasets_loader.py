@@ -24,8 +24,7 @@ USPTO_URLS = {
 
 
 class USPTOLoader:
-    """https://github.com/deepchem/deepchem/blob/master/deepchem/molnet/load_function/uspto_datasets.py
-    """
+    """https://github.com/deepchem/deepchem/blob/master/deepchem/molnet/load_function/uspto_datasets.py"""
 
     def __init__(self, dataset_name: str):
         if dataset_name not in list(USPTO_URLS.keys()):
@@ -36,8 +35,7 @@ class USPTOLoader:
         self.dataset_url = USPTO_URLS[self.dataset_name]
 
     def download_dataset(self) -> None:
-        """Function to download the USPTO datasets
-        """
+        """Function to download the USPTO datasets"""
         if not (DEFAULT_DIR / f"{self.dataset_name}.csv").exists():
             logger.info("Downloading dataset...")
             download_url(

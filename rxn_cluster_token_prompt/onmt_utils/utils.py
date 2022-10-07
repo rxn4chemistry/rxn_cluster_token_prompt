@@ -103,7 +103,10 @@ def tokenize_file(
     dump_list_to_file(tokenized, output_file)
 
 
-def detokenize_file(input_file: PathLike, output_file: PathLike,) -> None:
+def detokenize_file(
+    input_file: PathLike,
+    output_file: PathLike,
+) -> None:
     raise_if_identical_path(input_file, output_file)
     logger.info(f'Detokenizing "{input_file}" -> "{output_file}".')
 

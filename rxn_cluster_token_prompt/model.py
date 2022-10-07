@@ -37,8 +37,7 @@ CLASSIFICATION_MODEL_LOCATION_DICT = {
 
 
 class RXNClusterTokenPrompt:
-    """ Wrap the Cluster Token Prompt Transformer model
-    """
+    """Wrap the Cluster Token Prompt Transformer model"""
 
     def __init__(
         self,
@@ -188,8 +187,10 @@ class RXNClusterTokenPrompt:
                         else forward_output.score,
                     )
                     predicted_rxn = create_rxn(prediction, product)
-                    classification_output = classification_translator.translate_single_with_score(
-                        tokenize_smiles(predicted_rxn)
+                    classification_output = (
+                        classification_translator.translate_single_with_score(
+                            tokenize_smiles(predicted_rxn)
+                        )
                     )
                     classification_prediction = classification_output.text
                     enriched_predictions.append(
