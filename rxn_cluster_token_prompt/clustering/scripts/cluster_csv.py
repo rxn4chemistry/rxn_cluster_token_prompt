@@ -104,7 +104,7 @@ def main(
 
         unique_classes = sorted(list(set(df[class_column].values)))
         logger.info(f"Found {len(unique_classes)} unique reaction classes.")
-        if len(unique_classes) < n_clusters_random:
+        if n_clusters_random is not None and len(unique_classes) < n_clusters_random:
             raise ValueError(
                 "Choose a number of clusters smaller that the number of unique reaction classes."
             )
@@ -113,10 +113,10 @@ def main(
             inverted_clusters_map = {cl: i for i, cl in enumerate(unique_classes)}
             logger.info(f"Random clusters map: {inverted_clusters_map}")
             df[cluster_column] = df[class_column].map(inverted_clusters_map)
-        else:
+        elif n_clusters_random is not None:
             logger.info(f"Grouping randomly in {n_clusters_random} clusters.")
             random.seed(42)
-            clusters_map: Dict[str, List[str]] = {
+            clusters_map: Dict[int, List[str]] = {
                 i: [] for i in range(n_clusters_random)
             }
             while unique_classes:

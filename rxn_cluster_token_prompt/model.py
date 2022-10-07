@@ -1,6 +1,7 @@
 """Rxn cluster token prompt wrapper for the models."""
 import logging
-from typing import Dict, List, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Tuple, Union
 
 from rxn.chemutils.conversion import canonicalize_smiles
 from rxn.chemutils.tokenization import detokenize_smiles, tokenize_smiles
@@ -41,11 +42,13 @@ class RXNClusterTokenPrompt:
 
     def __init__(
         self,
-        retro_model_path: str = RETRO_MODEL_LOCATION_DICT["10clusters"],
-        forward_model_path: str = FORWARD_MODEL_LOCATION_DICT["forwardUSPTO"],
-        classification_model_path: str = CLASSIFICATION_MODEL_LOCATION_DICT[
-            "classificationUSPTO"
+        retro_model_path: Union[str, Path] = RETRO_MODEL_LOCATION_DICT["10clusters"],
+        forward_model_path: Union[str, Path] = FORWARD_MODEL_LOCATION_DICT[
+            "forwardUSPTO"
         ],
+        classification_model_path: Union[
+            str, Path
+        ] = CLASSIFICATION_MODEL_LOCATION_DICT["classificationUSPTO"],
         n_tokens: int = RETRO_MODEL_TOKENS_DICT["10clusters"],
         beam_size: int = 10,
         max_length: int = 300,
@@ -55,7 +58,7 @@ class RXNClusterTokenPrompt:
         """
         RXNClusterTokenPrompt constructor.
         Args:
-            retro_model_path: the path to the trined single-step retrosynthesis model
+            retro_model_path: the path to the trained single-step retrosynthesis model
             forward_model_path: the path to the trained forward predictiion model
             classification_model_path: the path to the trained reaction classification model
             n_tokens: the number of cluster tokens in the chosen single-step retrosynthesis model
@@ -86,7 +89,7 @@ class RXNClusterTokenPrompt:
         probabilities=True,
         reorder_by_forward_likelihood=False,
         verbose=False,
-    ) -> Dict[str, List[Tuple[str, str, float, str, float, int]]]:
+    ) -> Dict[str, List[Tuple[Any, Any, str, Any, str]]]:
         """Function to run predictions with the RXNClusterTokenPrompt model.
 
         Args:
@@ -165,16 +168,18 @@ class RXNClusterTokenPrompt:
 
         multiplier = get_multiplier(ground_truth=products, predictions=res)
 
-        output = {}
+        output: Dict[str, List[Tuple[Any, Any, str, Any, str]]] = {}
 
         for i, product in enumerate(products):
 
-            def _remove_invalids(predictions: List[Tuple]) -> List[Tuple]:
+            def _remove_invalids(
+                predictions: List[Tuple[str, Any]]
+            ) -> List[Tuple[str, Any]]:
                 return [pred for pred in predictions if pred[0] != ""]
 
             def _forward_and_classification_prediction(
-                predictions: List[Tuple],
-            ) -> List[Tuple]:
+                predictions: List[Tuple[str, Any]],
+            ) -> List[Tuple[Any, Any, str, Any, str]]:
                 enriched_predictions = []
                 for prediction, confidence in predictions:
                     forward_output = forward_translator.translate_single_with_score(
@@ -211,18 +216,19 @@ class RXNClusterTokenPrompt:
                 if remove_invalid_retro_predictions
                 else _forward_and_classification_prediction(res[i : i + multiplier])
             )
+
             if reorder_by_forward_likelihood:
                 output[product] = sorted(
                     output[product], key=lambda x: x[3], reverse=True
                 )
             if verbose:
                 print("Target molecule: ", product)
-                for prediction in output[product]:
-                    self._display(prediction)
+                for p in output[product]:
+                    self._display(p)
 
         return output
 
-    def _display(self, prediction: Tuple):
+    def _display(self, prediction: Tuple[Any, Any, str, Any, str]):
         """Diplays a prediction composed by
         (target, predicted_precursors, retro_confidence, predicted_product, forward_confidence, predicted_class)
         """

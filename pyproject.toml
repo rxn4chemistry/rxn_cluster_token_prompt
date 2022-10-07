@@ -9,7 +9,12 @@ check_untyped_defs = true
 module = [
     "diskcache.*",
     "pymongo.*",
-    "pydantic.*"
+    "pydantic.*",
+    "onmt.*",
+    "tqdm.*",
+    "pandas.*",
+    "sklearn.*",
+    "rxnfp.*"
 ]
 ignore_missing_imports = true
 
