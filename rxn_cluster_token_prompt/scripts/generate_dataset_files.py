@@ -1,13 +1,12 @@
+import logging
 from enum import Enum
+from pathlib import Path
 from typing import List
 
 import click
-import logging
 import pandas as pd
-
-from pathlib import Path
-from rxn.utilities.files import dump_list_to_file
 from rxn.chemutils.tokenization import tokenize_smiles
+from rxn.utilities.files import dump_list_to_file
 from rxn.utilities.logging import setup_console_logger
 
 logger = logging.getLogger(__name__)
@@ -26,55 +25,66 @@ def tokenize_smiles_list(smiles_list: List[str]) -> List[str]:
 
 @click.command()
 @click.option(
-    '--input_csv_file',
-    '-i',
+    "--input_csv_file",
+    "-i",
     type=click.Path(exists=True),
     required=True,
-    help="Path to the csv file containing the reaction smiles and optionally the reaction class information."
+    help="Path to the csv file containing the reaction smiles and optionally the reaction class information.",
 )
+@click.option("--output_path", "-o", type=str, required=True, help="Output path")
 @click.option(
-    '--output_path', '-o', type=str, required=True, help="Output path"
-)
-@click.option(
-    '--model-type',
-    '-m',
+    "--model-type",
+    "-m",
     type=str,
     default="retro",
-    help="Model type: available are 'retro'(default), 'forward' and 'classification'."
+    help="Model type: available are 'retro'(default), 'forward' and 'classification'.",
 )
 @click.option(
-    '--rxn-column-name',
+    "--rxn-column-name",
     type=str,
     default="rxn",
-    help="Column under which reaction SMILES are stored, default is 'rxn'."
+    help="Column under which reaction SMILES are stored, default is 'rxn'.",
 )
 @click.option(
-    '--class-column-name',
+    "--class-column-name",
     type=str,
     default="class",
-    help="Column under which the reaction classes are stored, default is 'class'."
+    help="Column under which the reaction classes are stored, default is 'class'.",
 )
 @click.option(
-    '--cluster-column-name',
+    "--cluster-column-name",
     type=str,
     default="cluster_id",
-    help="Column under which the clustering ids are stored, default is 'cluster_id'."
+    help="Column under which the clustering ids are stored, default is 'cluster_id'.",
 )
 @click.option(
-    '--seed', type=int, default=5, help="The seed used for generating the splits, default is 5."
+    "--seed",
+    type=int,
+    default=5,
+    help="The seed used for generating the splits, default is 5.",
 )
 @click.option(
-    '--split_ratio', default=0.1, type=float, help="The test and valid set ratio, default is 0.1"
+    "--split_ratio",
+    default=0.1,
+    type=float,
+    help="The test and valid set ratio, default is 0.1",
 )
 @click.option(
-    '--baseline',
+    "--baseline",
     default=False,
     is_flag=True,
-    help="Whether the model files are for the baseline retro model (in this case no class tokens are added)"
+    help="Whether the model files are for the baseline retro model (in this case no class tokens are added)",
 )
 def main(
-    input_csv_file: str, output_path: str, model_type: str, rxn_column_name: str,
-    class_column_name: str, cluster_column_name: str, seed: int, split_ratio: float, baseline: bool
+    input_csv_file: str,
+    output_path: str,
+    model_type: str,
+    rxn_column_name: str,
+    class_column_name: str,
+    cluster_column_name: str,
+    seed: int,
+    split_ratio: float,
+    baseline: bool,
 ):
     """Script to generate multiple random splits for a dataset for forward, retro or classification model
     training.
@@ -97,7 +107,11 @@ def main(
         raise KeyError(
             f"The column '{class_column_name}' was not found in the data. Cannot generate files for classification."
         )
-    if not baseline and model == ModelType.retro and cluster_column_name not in df.columns:
+    if (
+        not baseline
+        and model == ModelType.retro
+        and cluster_column_name not in df.columns
+    ):
         raise KeyError(
             f"The column '{cluster_column_name}' was not found in the data. Cannot generate files for retro."
         )
@@ -123,41 +137,45 @@ def main(
     logger.info("Generating the files ...")
     for df, split in zip(
         [train_df, test_df, valid_df, train_valid_df],
-        ['train', 'test', 'valid', 'train-with-valid']
+        ["train", "test", "valid", "train-with-valid"],
     ):
         if model == ModelType.classification:
             dump_list_to_file(
-                tokenize_smiles_list(df[rxn_column_name]), model_output_path / f"rxn-{split}.txt"
+                tokenize_smiles_list(df[rxn_column_name]),
+                model_output_path / f"rxn-{split}.txt",
             )
-            dump_list_to_file(df[class_column_name], model_output_path / f"class-{split}.txt")
+            dump_list_to_file(
+                df[class_column_name], model_output_path / f"class-{split}.txt"
+            )
         else:
-            df['product'] = df[rxn_column_name].apply(lambda x: x.split('>>')[1])
-            df['precursors'] = df[rxn_column_name].apply(lambda x: x.split('>>')[0])
+            df["product"] = df[rxn_column_name].apply(lambda x: x.split(">>")[1])
+            df["precursors"] = df[rxn_column_name].apply(lambda x: x.split(">>")[0])
 
             if model == ModelType.forward or baseline:
                 dump_list_to_file(
-                    tokenize_smiles_list(df['product']), model_output_path / f"product-{split}.txt"
+                    tokenize_smiles_list(df["product"]),
+                    model_output_path / f"product-{split}.txt",
                 )
                 dump_list_to_file(
-                    tokenize_smiles_list(df['precursors']),
-                    model_output_path / f"precursors-{split}.txt"
+                    tokenize_smiles_list(df["precursors"]),
+                    model_output_path / f"precursors-{split}.txt",
                 )
             else:
                 # concatenate the class token for train and train-with-valid splits
-                if split not in ['train', 'train-with-valid']:
-                    df['retro_product'] = df['product']
+                if split not in ["train", "train-with-valid"]:
+                    df["retro_product"] = df["product"]
                 else:
-                    df['retro_product'] = df.apply(
+                    df["retro_product"] = df.apply(
                         lambda x: f"[{x[cluster_column_name]}]{x['product']}", axis=1
                     )
 
                 dump_list_to_file(
-                    tokenize_smiles_list(df['retro_product']),
-                    model_output_path / f"product-{split}.txt"
+                    tokenize_smiles_list(df["retro_product"]),
+                    model_output_path / f"product-{split}.txt",
                 )
                 dump_list_to_file(
-                    tokenize_smiles_list(df['precursors']),
-                    model_output_path / f"precursors-{split}.txt"
+                    tokenize_smiles_list(df["precursors"]),
+                    model_output_path / f"precursors-{split}.txt",
                 )
 
     logger.info(f"Output folder: {model_output_path}")

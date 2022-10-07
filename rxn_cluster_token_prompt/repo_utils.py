@@ -1,6 +1,7 @@
 import random
-import numpy
 from pathlib import Path
+
+import numpy
 
 
 def root_directory() -> Path:
@@ -14,21 +15,21 @@ def data_directory() -> Path:
     """
     Returns the path to the data directory at the root of the repository
     """
-    return root_directory() / 'data'
+    return root_directory() / "data"
 
 
 def models_directory() -> Path:
     """
     Returns the path to the data directory at the root of the repository
     """
-    return root_directory() / 'models'
+    return root_directory() / "models"
 
 
 def notebooks_directory() -> Path:
     """
     Returns the path to the notebooks directory at the root of the repository
     """
-    return root_directory() / 'notebooks'
+    return root_directory() / "notebooks"
 
 
 def reset_random_seed() -> None:

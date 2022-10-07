@@ -4,6 +4,7 @@ from typing import Optional, Union
 
 from rxn.utilities.files import is_path_exists_or_creatable
 
+from rxn_cluster_token_prompt.onmt_utils.translate import translate
 from rxn_cluster_token_prompt.onmt_utils.utils import (
     classification_file_is_tokenized,
     detokenize_classification_file,
@@ -11,7 +12,6 @@ from rxn_cluster_token_prompt.onmt_utils.utils import (
     tokenize_classification_file,
     tokenize_file,
 )
-from rxn_cluster_token_prompt.onmt_utils.translate import translate
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())

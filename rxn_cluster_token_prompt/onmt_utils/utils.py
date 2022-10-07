@@ -4,20 +4,14 @@ import shutil
 from pathlib import Path
 
 import numpy as np
-
 from rxn.chemutils.conversion import canonicalize_smiles
 from rxn.chemutils.exceptions import InvalidSmiles
-
 from rxn.chemutils.tokenization import (
     TokenizationError,
     detokenize_smiles,
     tokenize_smiles,
 )
-from rxn.utilities.files import (
-    PathLike,
-    dump_list_to_file,
-    iterate_lines_from_file,
-)
+from rxn.utilities.files import PathLike, dump_list_to_file, iterate_lines_from_file
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -47,7 +41,9 @@ def string_is_tokenized(smiles_line: str) -> bool:
     return smiles_line == tokenized
 
 
-def maybe_canonicalize(smiles: str, check_valence: bool = True, invalid_replacement='') -> str:
+def maybe_canonicalize(
+    smiles: str, check_valence: bool = True, invalid_replacement=""
+) -> str:
     """
     Canonicalize a SMILES string, but returns the original SMILES string if it fails.
     """
@@ -58,15 +54,17 @@ def maybe_canonicalize(smiles: str, check_valence: bool = True, invalid_replacem
 
 
 def maybe_canonicalize_rxn(
-    rxn_smiles: str, check_valence: bool = True, invalid_replacement=''
+    rxn_smiles: str, check_valence: bool = True, invalid_replacement=""
 ) -> str:
     """
     Canonicalize a SMILES string, but returns the original SMILES string if it fails.
     """
     try:
-        precursors, product = rxn_smiles.split('>>')
-        return f"{canonicalize_smiles(precursors, check_valence=check_valence)}>>" \
-               f"{canonicalize_smiles(product, check_valence=check_valence)}"
+        precursors, product = rxn_smiles.split(">>")
+        return (
+            f"{canonicalize_smiles(precursors, check_valence=check_valence)}>>"
+            f"{canonicalize_smiles(product, check_valence=check_valence)}"
+        )
     except InvalidSmiles:
         return invalid_replacement
 
@@ -98,20 +96,20 @@ def tokenize_file(
     logger.info(f'Tokenizing "{input_file}" -> "{output_file}".')
 
     tokenized = (
-        tokenize_line(line, invalid_placeholder) for line in iterate_lines_from_file(input_file)
+        tokenize_line(line, invalid_placeholder)
+        for line in iterate_lines_from_file(input_file)
     )
 
     dump_list_to_file(tokenized, output_file)
 
 
-def detokenize_file(
-    input_file: PathLike,
-    output_file: PathLike,
-) -> None:
+def detokenize_file(input_file: PathLike, output_file: PathLike,) -> None:
     raise_if_identical_path(input_file, output_file)
     logger.info(f'Detokenizing "{input_file}" -> "{output_file}".')
 
-    detokenized = (detokenize_smiles(line) for line in iterate_lines_from_file(input_file))
+    detokenized = (
+        detokenize_smiles(line) for line in iterate_lines_from_file(input_file)
+    )
     dump_list_to_file(detokenized, output_file)
 
 
@@ -265,7 +263,9 @@ def file_is_tokenized(filepath: PathLike) -> bool:
         if line == "":
             continue
         return string_is_tokenized(line)
-    raise RuntimeError(f'Could not determine whether "{filepath}" is tokenized: empty lines only.')
+    raise RuntimeError(
+        f'Could not determine whether "{filepath}" is tokenized: empty lines only.'
+    )
 
 
 def copy_as_detokenized(src: PathLike, dest: PathLike) -> None:
@@ -281,7 +281,6 @@ def copy_as_detokenized(src: PathLike, dest: PathLike) -> None:
 
 
 class MetricsFiles:
-
     def __init__(self, directory: PathLike):
         self.directory = Path(directory)
         self.log_file = self.directory / "log.txt"
@@ -310,7 +309,9 @@ class RetroFiles(MetricsFiles):
             self.directory / "predicted_precursors.txt.tokenized_log_probs"
         )
         self.predicted_products = self.directory / "predicted_products.txt"
-        self.predicted_products_canonical = (self.directory / "predicted_products_canonical.txt")
+        self.predicted_products_canonical = (
+            self.directory / "predicted_products_canonical.txt"
+        )
         self.predicted_products_log_probs = (
             self.directory / "predicted_products.txt.tokenized_log_probs"
         )

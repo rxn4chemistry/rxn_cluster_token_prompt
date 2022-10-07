@@ -1,7 +1,11 @@
 from argparse import Namespace
 from typing import Any, Iterable, Iterator, List, Optional, Union
 
-from rxn_cluster_token_prompt.onmt_utils.internal_translation_utils import RawTranslator, TranslationResult, get_onmt_opt
+from rxn_cluster_token_prompt.onmt_utils.internal_translation_utils import (
+    RawTranslator,
+    TranslationResult,
+    get_onmt_opt,
+)
 
 
 class Translator:
@@ -41,7 +45,9 @@ class Translator:
         translations = self.translate_multiple_with_scores(sentences)
         return [t[0].text for t in translations]
 
-    def translate_sentences_with_scores(self, sentences: Iterable[str]) -> List[TranslationResult]:
+    def translate_sentences_with_scores(
+        self, sentences: Iterable[str]
+    ) -> List[TranslationResult]:
         """
         Translate multiple sentences.
         """
@@ -49,9 +55,7 @@ class Translator:
         return [t[0] for t in translations]
 
     def translate_multiple_with_scores(
-        self,
-        sentences: Iterable[str],
-        n_best: Optional[int] = None
+        self, sentences: Iterable[str], n_best: Optional[int] = None
     ) -> Iterator[List[TranslationResult]]:
         """
         Translate multiple sentences.
@@ -70,7 +74,9 @@ class Translator:
         return translations
 
     @classmethod
-    def from_model_path(cls, model_path: Union[str, Iterable[str]], **kwargs: Any) -> "Translator":
+    def from_model_path(
+        cls, model_path: Union[str, Iterable[str]], **kwargs: Any
+    ) -> "Translator":
         """
         Create a Translator instance from the model path(s).
         Args:

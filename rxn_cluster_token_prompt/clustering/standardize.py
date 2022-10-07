@@ -2,7 +2,10 @@ import logging
 
 from rxn.chemutils.exceptions import InvalidSmiles
 from rxn.chemutils.reaction_equation import (
-    merge_reactants_and_agents, sort_compounds, canonicalize_compounds, remove_duplicate_compounds
+    canonicalize_compounds,
+    merge_reactants_and_agents,
+    remove_duplicate_compounds,
+    sort_compounds,
 )
 from rxn.chemutils.reaction_smiles import parse_any_reaction_smiles
 
@@ -18,10 +21,10 @@ def standardize_for_fp_model(rxn: str) -> str:
     try:
         return standardize_rxn_smiles(
             rxn_smiles=rxn,
-            fragment_bond='.',
+            fragment_bond=".",
             ordered_precursors=True,
             canonicalize=True,
-            remove_duplicate_molecules=True
+            remove_duplicate_molecules=True,
         )
     except InvalidSmiles as e:
         logger.warning(
@@ -29,16 +32,19 @@ def standardize_for_fp_model(rxn: str) -> str:
         )
         return standardize_rxn_smiles(
             rxn_smiles=rxn,
-            fragment_bond='.',
+            fragment_bond=".",
             ordered_precursors=True,
             canonicalize=False,
-            remove_duplicate_molecules=True
+            remove_duplicate_molecules=True,
         )
 
 
 def standardize_rxn_smiles(
-    rxn_smiles: str, fragment_bond: str, ordered_precursors: bool, canonicalize: bool,
-    remove_duplicate_molecules: bool
+    rxn_smiles: str,
+    fragment_bond: str,
+    ordered_precursors: bool,
+    canonicalize: bool,
+    remove_duplicate_molecules: bool,
 ) -> str:
     """
     Standardize a reaction SMILES with multiple options.

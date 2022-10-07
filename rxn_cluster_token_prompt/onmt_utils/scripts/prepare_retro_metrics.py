@@ -17,13 +17,15 @@ from rxn_cluster_token_prompt.onmt_utils.classification_translation import (
 from rxn_cluster_token_prompt.onmt_utils.forward_or_retro_translation import (
     forward_or_retro_translation,
 )
-from rxn_cluster_token_prompt.onmt_utils.utils import copy_as_detokenized
+from rxn_cluster_token_prompt.onmt_utils.scripts.canonicalize_file import (
+    canonicalize_file,
+)
 from rxn_cluster_token_prompt.onmt_utils.utils import (
     RetroFiles,
     convert_class_token_idx_for_translation_models,
+    copy_as_detokenized,
     raise_if_identical_path,
 )
-from rxn_cluster_token_prompt.onmt_utils.scripts.canonicalize_file import canonicalize_file
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -53,9 +55,13 @@ def create_rxn_from_files(
     required=True,
     help="File containing the precursors of a test set",
 )
-@click.option("--products_file", required=True, help="File containing the products of a test set")
+@click.option(
+    "--products_file", required=True, help="File containing the products of a test set"
+)
 @click.option("--output_dir", required=True, help="Where to save all the files")
-@click.option("--retro_model", required=True, help="Path to the single-step retrosynthesis model")
+@click.option(
+    "--retro_model", required=True, help="Path to the single-step retrosynthesis model"
+)
 @click.option("--forward_model", required=True, help="Path to the forward model")
 @click.option(
     "--classification_model",
@@ -64,9 +70,13 @@ def create_rxn_from_files(
     help="Path to the classification model",
 )
 @click.option("--batch_size", default=64, type=int, help="Batch size")
-@click.option("--n_best", default=10, type=int, help="Number of retro predictions to make (top-N)")
+@click.option(
+    "--n_best", default=10, type=int, help="Number of retro predictions to make (top-N)"
+)
 @click.option("--gpu", is_flag=True, help="If given, run the predictions on a GPU.")
-@click.option("--beam_size", default=15, type=int, help="Beam size for retro (> n_best).")
+@click.option(
+    "--beam_size", default=15, type=int, help="Beam size for retro (> n_best)."
+)
 @click.option(
     "--class_tokens",
     default=None,
@@ -93,7 +103,9 @@ def main(
     output_path.mkdir(parents=True, exist_ok=True)
     output_path_contains_files = any(output_path.iterdir())
     if output_path_contains_files:
-        raise RuntimeError(f'The output directory "{output_path}" is required to be empty.')
+        raise RuntimeError(
+            f'The output directory "{output_path}" is required to be empty.'
+        )
 
     retro_files = RetroFiles(output_path)
 
@@ -106,7 +118,8 @@ def main(
             for class_token_idx in range(class_tokens)
         )
         class_token_precursors = (
-            detokenize_smiles(line) for line in iterate_lines_from_file(precursors_file)
+            detokenize_smiles(line)
+            for line in iterate_lines_from_file(precursors_file)
             for _ in range(class_tokens)
         )
         dump_list_to_file(class_token_products, retro_files.class_token_products)
@@ -118,9 +131,11 @@ def main(
     # retro
     forward_or_retro_translation(
         src_file=retro_files.gt_products
-        if class_tokens is None else retro_files.class_token_products,
+        if class_tokens is None
+        else retro_files.class_token_products,
         tgt_file=retro_files.gt_precursors
-        if class_tokens is None else retro_files.class_token_precursors,
+        if class_tokens is None
+        else retro_files.class_token_precursors,
         pred_file=retro_files.predicted_precursors,
         model=retro_model,
         n_best=n_best,

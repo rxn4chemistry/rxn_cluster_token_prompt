@@ -1,7 +1,6 @@
+from pathlib import Path
 from typing import Optional
 from urllib.request import urlretrieve
-
-from pathlib import Path
 
 
 def download_url(url: str, dest_dir: Path, name: Optional[str] = None):
@@ -18,9 +17,9 @@ def download_url(url: str, dest_dir: Path, name: Optional[str] = None):
     """
     if name is None:
         name = url
-        if '?' in name:
-            name = name[:name.find('?')]
-        if '/' in name:
-            name = name[name.rfind('/') + 1:]
+        if "?" in name:
+            name = name[: name.find("?")]
+        if "/" in name:
+            name = name[name.rfind("/") + 1 :]
     dest_dir.mkdir(parents=True, exist_ok=True)
     urlretrieve(url, dest_dir / name)

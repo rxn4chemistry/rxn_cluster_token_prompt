@@ -11,11 +11,7 @@ from rxn.chemutils.reaction_smiles import (
     parse_reaction_smiles,
     to_reaction_smiles,
 )
-from rxn.utilities.files import (
-    PathLike,
-    dump_list_to_file,
-    iterate_lines_from_file,
-)
+from rxn.utilities.files import PathLike, dump_list_to_file, iterate_lines_from_file
 from rxn.utilities.logging import setup_console_logger
 
 from rxn_cluster_token_prompt.onmt_utils.utils import raise_if_identical_path
@@ -24,7 +20,9 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 
-def canonicalize_line(smiles_line: str, invalid_placeholder: str, sort_molecules: bool) -> str:
+def canonicalize_line(
+    smiles_line: str, invalid_placeholder: str, sort_molecules: bool
+) -> str:
     try:
         if ">" in smiles_line:
             # we have a reaction SMILES

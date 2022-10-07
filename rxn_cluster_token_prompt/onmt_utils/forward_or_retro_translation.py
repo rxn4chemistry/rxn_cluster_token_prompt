@@ -3,8 +3,12 @@ from typing import Optional
 
 from rxn.utilities.files import PathLike, is_path_exists_or_creatable
 
-from rxn_cluster_token_prompt.onmt_utils.utils import detokenize_file, file_is_tokenized, tokenize_file
 from rxn_cluster_token_prompt.onmt_utils.translate import translate
+from rxn_cluster_token_prompt.onmt_utils.utils import (
+    detokenize_file,
+    file_is_tokenized,
+    tokenize_file,
+)
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())

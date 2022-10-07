@@ -41,7 +41,9 @@ def translate(
         as_external_command: runs the onmt command instead of Python code.
     """
     if not gpu:
-        logger.warning("GPU option not set. Only CPUs will be used. The translation may be slow!")
+        logger.warning(
+            "GPU option not set. Only CPUs will be used. The translation may be slow!"
+        )
 
     if as_external_command:
         fn = translate_as_external_command
@@ -78,7 +80,9 @@ def translate_as_python_code(
     Translate directly from Python - not by executing the OpenNMT command as a subprocess.
     See the function translate() for the documentation of the arguments.
     """
-    logger.info(f'Running translation "{src}" -> "{output}", directly from Python code.')
+    logger.info(
+        f'Running translation "{src}" -> "{output}", directly from Python code.'
+    )
 
     if tgt is not None:
         # Note: the gold score is determined by comparing with the provided tgt.
@@ -97,7 +101,9 @@ def translate_as_python_code(
     )
 
     src_iterator = iterate_lines_from_file(src)
-    results_iterator = translator.translate_multiple_with_scores(src_iterator, n_best=n_best)
+    results_iterator = translator.translate_multiple_with_scores(
+        src_iterator, n_best=n_best
+    )
 
     # Note: this corresponds to the name of our OpenNMT fork
     log_probs_filename = str(output) + "_log_probs"

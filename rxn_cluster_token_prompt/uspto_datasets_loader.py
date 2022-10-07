@@ -6,14 +6,14 @@ import logging
 
 import pandas as pd
 
+from rxn_cluster_token_prompt.onmt_utils.utils import maybe_canonicalize_rxn
 from rxn_cluster_token_prompt.repo_utils import data_directory
 from rxn_cluster_token_prompt.utils import download_url
-from rxn_cluster_token_prompt.onmt_utils.utils import maybe_canonicalize_rxn
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
-DEFAULT_DIR = data_directory() / 'uspto'
+DEFAULT_DIR = data_directory() / "uspto"
 
 USPTO_URLS = {
     "USPTO_MIT": "https://deepchemdata.s3.us-west-1.amazonaws.com/datasets/USPTO_MIT.csv",
@@ -29,7 +29,9 @@ class USPTOLoader:
 
     def __init__(self, dataset_name: str):
         if dataset_name not in list(USPTO_URLS.keys()):
-            raise ValueError(f"The provided dataset name {dataset_name} is not available.")
+            raise ValueError(
+                f"The provided dataset name {dataset_name} is not available."
+            )
         self.dataset_name = dataset_name
         self.dataset_url = USPTO_URLS[self.dataset_name]
 
@@ -39,11 +41,15 @@ class USPTOLoader:
         if not (DEFAULT_DIR / f"{self.dataset_name}.csv").exists():
             logger.info("Downloading dataset...")
             download_url(
-                url=self.dataset_url, dest_dir=DEFAULT_DIR, name=f"{self.dataset_name}.csv"
+                url=self.dataset_url,
+                dest_dir=DEFAULT_DIR,
+                name=f"{self.dataset_name}.csv",
             )
             logger.info("Dataset download complete.")
 
-    def process_dataset(self, canonicalize: bool = True, single_product: bool = True) -> None:
+    def process_dataset(
+        self, canonicalize: bool = True, single_product: bool = True
+    ) -> None:
         """Function to process the dataset after the download.
         Args:
             canonicalize: whether to canonicalize the downloaded reactions
@@ -57,8 +63,8 @@ class USPTOLoader:
         if single_product:
             logger.info(f"Number of reactions: {len(df)}")
             logger.info("Removing reactions with more/less than 1 product ...")
-            df["product"] = df[reactions_column_name].apply(lambda x: x.split('>>')[1])
-            df_filter = df["product"].apply(lambda x: len(x.split('.')) == 1)
+            df["product"] = df[reactions_column_name].apply(lambda x: x.split(">>")[1])
+            df_filter = df["product"].apply(lambda x: len(x.split(".")) == 1)
             df = df[df_filter]
             logger.info(f"Number of reactions: {len(df)}")
         if canonicalize:
