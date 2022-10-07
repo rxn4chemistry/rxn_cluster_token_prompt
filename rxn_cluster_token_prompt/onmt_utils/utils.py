@@ -136,7 +136,7 @@ def detokenize_class(tokenized_class: str) -> str:
         try:
             int(splitted_class[0])
             return tokenized_class
-        except:
+        except ValueError:
             pass
 
     if len(splitted_class) != 3:
@@ -160,7 +160,7 @@ def tokenize_class(detokenized_class: str) -> str:
     try:
         int(detokenized_class)
         return detokenized_class
-    except:
+    except ValueError:
         pass
 
     splitted_class = detokenized_class.split(".")

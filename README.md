@@ -25,9 +25,8 @@ When developing, before committing please run
 ```bash
 black .
 isort --profile black .
-yapf -ipr .
-mypy .
 flake8
+mypy .
 ```
 To simplify the scripts run, export the path to this repo
 and the path where to store the dataset files

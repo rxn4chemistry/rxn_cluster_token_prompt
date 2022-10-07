@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 from typing import Iterable, List
 
 from tqdm import tqdm
@@ -10,10 +9,7 @@ logger.addHandler(logging.NullHandler())
 
 def get_model_and_tokenizer(force_no_cuda: bool = False):
     import torch
-    from rxnfp.transformer_fingerprints import (
-        RXNBERTFingerprintGenerator,
-        get_default_model_and_tokenizer,
-    )
+    from rxnfp.transformer_fingerprints import get_default_model_and_tokenizer
 
     device = torch.device(
         "cuda" if (torch.cuda.is_available() and not force_no_cuda) else "cpu"
