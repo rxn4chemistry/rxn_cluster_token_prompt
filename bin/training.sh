@@ -7,6 +7,8 @@ VALID_SRC="" # the txt file containing the tokenized products for validation
 VALID_TGT="" # the txt file containing the tokenized precursors for validation
 
 PREPROCESSDIR="" # were to store the preprocessed files and the vocab
+echo "Creating preprocessing directory: $PREPROCESSDIR" 
+mkdir -p $PREPROCESSDIR
 
 # ONMT PREPROCESS
 onmt_preprocess -train_src ${TRAIN_SRC} \
@@ -23,6 +25,8 @@ onmt_preprocess -train_src ${TRAIN_SRC} \
 
 # RETRO TRAINING PARAMETERS
 OUTPUTDIR="" # where to store the trained model
+echo "Creating output directory: $OUTPUTDIR"
+mkdir -p $OUTPUTDIR
 
 # TRAINING
 onmt_train -data ${PREPROCESSDIR}/preprocessed_rxn_cluster_token_prompt \
