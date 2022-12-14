@@ -13,12 +13,12 @@ N_CLASS_TOKENS=10 # Number of class tokens of the trained model
 # The scripts saves the new files with the `.reordered` extension. The reordering needs NOT to be executed
 # for the baseline model
 
-reorder-retro-predictions-class-token --ground_truth_file ${GROUND_TRUTH_FILE} \
-                                      --predictions_file ${PREDICTIONS_FILE} \
-                                      --confidences_file ${CONFIDENCES_FILE} \
-                                      --fwd_predictions_file ${FWD_PREDICTIONS_FILE} \
-                                      --classes_predictions_file ${CLASSES_PREDICTIONS_FILE} \
-                                      --n_class_tokens ${N_CLASS_TOKENS}
+reorder-retro-predictions --ground_truth_file ${GROUND_TRUTH_FILE} \
+                          --predictions_file ${PREDICTIONS_FILE} \
+                          --confidences_file ${CONFIDENCES_FILE} \
+                          --fwd_predictions_file ${FWD_PREDICTIONS_FILE} \
+                          --classes_predictions_file ${CLASSES_PREDICTIONS_FILE} \
+                          --n_class_tokens ${N_CLASS_TOKENS}
 
 # Now compute the metrics: remove the `--reordered` flag to get results for the baseline model
 
