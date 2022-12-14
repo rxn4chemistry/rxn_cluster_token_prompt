@@ -151,3 +151,15 @@ one gpu.
 
 To evaluate your models you can customize the script `bin/compute_metrics.sh`. The output is a json file called metrics.json
 where the values of accuracy, round-trip accuracy, class-diversity and coverage are reported.
+
+### Citation
+
+```
+@unpublished{              
+Toniato2022enhancing,              
+title={Enhancing diversity in language based models for single-step retrosynthesis},              
+author={Alessandra Toniato,Alain C. Vaucher,Philippe Schwaller,Teodoro Laino},              
+journal={OpenReview Preprint},              
+year={2022}            
+}
+```
